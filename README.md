@@ -95,11 +95,7 @@ A web-based system designed to manage movie reservations and booking-related pro
 
 **Technologies:**
 
-* PHP
 * MySQL
-* HTML
-* CSS
-* JavaScript
 
 **Key Features:**
 
