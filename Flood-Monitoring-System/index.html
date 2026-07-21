@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CDRRMO Flood Monitoring</title>
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+  <!--================ HEADER =================-->
+  <header class="header">
+    <img src="assets/img/logo.png" alt="Logo" class="logo" />
+    <h1 class="title">CDRRMO Flood Monitoring System Borongan Office</h1>
+  </header>
+
+  <!--================ MAIN =================-->
+  <main class="main container">
+    <!-- Left Section -->
+    <div class="main__left">
+      <p class="message">
+        Stay prepared, stay protected,<br />
+        early warnings for safer tomorrows.
+      </p>
+     
+      <a href="login.html" class="login-btn">Login</a>
+
+    </div>
+
+    <!-- Right Section (Slider) -->
+    <div class="main__right">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><img src="assets/img/pic1.jpg" alt="Slide 1" /></div>
+          <div class="swiper-slide"><img src="assets/img/pic2.jpg" alt="Slide 2" /></div>
+          <div class="swiper-slide"><img src="assets/img/pic3.jpg" alt="Slide 3" /></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </main>
+
+  <!--================ JS =================-->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    new Swiper('.swiper', {
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+  </script>
+</body>
+</html>

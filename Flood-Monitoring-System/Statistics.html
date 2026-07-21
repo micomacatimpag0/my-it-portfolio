@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CDRRMO Flood Statistics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #004ba8;
+      --secondary: #003366;
+      --accent: #f4f4f4;
+      --danger: #800000;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--accent);
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: var(--secondary);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .logo img {
+      width: 120px;
+    }
+
+    .nav-links, .logout-link {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .nav-links a,
+    .logout-link a {
+      color: white;
+      text-decoration: none;
+      padding: 15px 25px;
+      text-align: center;
+      border-left: 4px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background-color: #004080;
+      border-left: 4px solid white;
+    }
+
+    .logout-link a {
+      background-color: transparent;
+    }
+
+    .logout-link a:hover {
+      background-color: var(--danger);
+      border-left: 4px solid white;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: #004ba8;
+      color: white;
+      text-align: center;
+      padding: 24px 0;
+      font-size: 28px;
+      font-weight: bold;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-content {
+      padding: 40px;
+      width: 100%;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .chart-header button {
+      padding: 10px 18px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+    }
+
+    .chart-header button:hover {
+      background-color: var(--secondary);
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <div class="logo">
+        <img src="assets/img/logo.png" alt="CDRRMO Logo" />
+      </div>
+      <div class="nav-links">
+        <a href="Main.html">🏠 Home</a>
+        <a href="History.html">📜 Flood History</a>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="main-wrapper">
+    <header class="header">CDRRMO Flood Monitoring System - Statistics</header>
+    <div class="main-content">
+      <div class="card">
+        <div class="chart-header">
+          <button id="downloadBtn">Show Height Chart</button>
+        </div>
+        <canvas id="floodCountChart" width="800" height="400"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseURL = "https://flood-f330b-default-rtdb.firebaseio.com/floodHistory.json";
+    const ctx = document.getElementById('floodCountChart');
+    const toggleBtn = document.getElementById('downloadBtn');
+
+    let currentChart = null;
+    let showingHeights = false;
+
+    async function fetchFloodHistory() {
+      const res = await fetch(firebaseURL);
+      const data = await res.json();
+      return Object.values(data || {});
+    }
+
+    function groupByDateCounts(data) {
+      const countByDate = {};
+      data.forEach(entry => {
+        const date = entry.date || 'Unknown';
+        countByDate[date] = (countByDate[date] || 0) + 1;
+      });
+      return countByDate;
+    }
+
+    function groupByDateHeights(data) {
+      const heightByDate = {};
+      const counts = {};
+
+      data.forEach(entry => {
+        const status = (entry.floodStatus || "").toLowerCase();
+        const date = entry.date || "Unknown";
+        const height = parseFloat(entry.waterLevel || 0);
+
+        // ✅ Only include if floodStatus is "mid" or "all switches triggered"
+        if (!isNaN(height) && (status.includes("mid") || status.includes("all"))) {
+          heightByDate[date] = (heightByDate[date] || 0) + height;
+          counts[date] = (counts[date] || 0) + 1;
+        }
+      });
+
+      // ✅ Compute average per date
+      for (const date in heightByDate) {
+        heightByDate[date] /= counts[date];
+      }
+
+      return heightByDate;
+    }
+
+
+    function renderChart(labels, data, label, color, title) {
+      if (currentChart) currentChart.destroy();
+      currentChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label,
+            data,
+            fill: false,
+            borderColor: color,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: title
+            }
+          }
+        }
+      });
+    }
+
+    async function showIncidentChart() {
+      const entries = await fetchFloodHistory();
+      const floodCounts = groupByDateCounts(entries);
+      const labels = Object.keys(floodCounts);
+      const data = Object.values(floodCounts);
+      renderChart(labels, data, 'Number of Flood Incidents', 'red', 'Flood Occurrences Over Time');
+    }
+
+    async function showHeightChart() {
+      const entries = await fetchFloodHistory();
+      const heightData = groupByDateHeights(entries);
+      const labels = Object.keys(heightData);
+      const data = Object.values(heightData);
+      renderChart(labels, data, 'Average Water Height (cm)', 'blue', 'Average Flood Height Over Time');
+    }
+
+    toggleBtn.addEventListener('click', async () => {
+      showingHeights = !showingHeights;
+      toggleBtn.textContent = showingHeights ? 'Show Incident Chart' : 'Show Height Chart';
+      if (showingHeights) {
+        await showHeightChart();
+      } else {
+        await showIncidentChart();
+      }
+    });
+
+    showIncidentChart();
+  </script>
+</body>
+</html>

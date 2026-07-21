@@ -1,0 +1,143 @@
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f9fc;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+  
+  /* Layout */
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #003366;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 50px;
+    margin-right: 15px;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  
+  /* Navigation */
+  .nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+  }
+  
+  .nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  
+  .nav ul li a:hover {
+    color: #ffcc00;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  /* Status */
+  .status-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 40px;
+  }
+  
+  .water-status {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .status.normal {
+    color: #22c55e;
+  }
+  
+  .status.alert {
+    color: #f59e0b;
+  }
+  
+  .status.warning {
+    color: #eab308;
+  }
+  
+  .status.danger {
+    color: #dc2626;
+  }
+  
+  /* Legend Section */
+  .legend-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  
+  .legend-box {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  .legend-box p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+  }
+  
+  .badge {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-radius: 50%;
+  }
+  
+  .badge.alert {
+    background-color: #f59e0b;
+  }
+  
+  .badge.warning {
+    background-color: #eab308;
+  }
+  
+  .badge.danger {
+    background-color: #dc2626;
+  }
+  

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CDRRMO Flood Monitoring</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #004ba8;
+      --danger: #ff0000;
+      --warning: #ff9900;
+      --alert: #e5ff00;
+      --safe: #28a745;
+      --bg-light: #f4f4f4;
+      --box-bg: #ffffff;
+      --text-dark: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-light);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #003366;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px 0;
+    }
+
+    .logo img {
+      width: 120px;
+      margin: 0 auto 30px;
+      display: block;
+    }
+
+    .nav-links, .logout-link {
+      text-align: center;
+    }
+
+    .nav-links a, .logout-link a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px 25px;
+      transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: #004080;
+    }
+
+    .logout-link a:hover {
+      background-color: #800000;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .header {
+      background-color: var(--primary);
+      color: white;
+      padding: 20px 40px;
+      font-size: 28px;
+      height: 80px;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .user-id {
+      font-size: 13px;
+      margin-top: 4px;
+      color: #ddd;
+    } 
+
+    .main-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .bento-box {
+      background-color: var(--box-bg);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .bento-header {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bento-header i {
+      font-size: 20px;
+    }
+
+    .bento-value {
+      font-size: 36px;
+      font-weight: bold;
+      color: var(--text-dark);
+      text-align: center;
+    }
+
+    .status {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    .status.normal {
+      background-color: var(--safe);
+    }
+
+    .status.alert {
+      background-color: var(--alert);
+      color: #000;
+    }
+
+    .status.warning {
+      background-color: var(--warning);
+    }
+
+    .status.danger {
+      background-color: var(--danger);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      color: #444;
+    }
+
+    .legend-item i {
+      font-size: 18px;
+    }
+
+    .intro-text {
+      grid-column: 1 / -1;
+      font-size: 16px;
+      color: #555;
+      text-align: center;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        font-size: 20px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <div class="logo"><img src="assets/img/logo.png" alt="CDRRMO Logo"></div>
+      <div class="nav-links">
+        <a id="historyLink" href="History.html">📜 Flood History</a>
+        <a id="statisticsLink" href="Statistics.html">📊 Flood Statistics</a>
+      </div>
+    </div>
+    <div class="logout-link"><a href="login.html">Logout</a></div>
+  </div>
+
+  <div class="main-wrapper">
+    <header class="header">
+      CDRRMO Flood Monitoring - Borongan Office
+    </header>
+    <div class="main-content">
+      <div class="intro-text">
+        Monitor real-time flood levels, rainfall, and water flow in your area.
+      </div>
+
+      <div class="bento-box">
+        <div class="bento-header"><i class="fas fa-water"></i>Water Level</div>
+        <div class="bento-value" id="waterLevel">0 cm</div>
+        <div class="status normal" id="waterLevelStatus">Normal</div>
+      </div>
+
+      <div class="bento-box">
+        <div class="bento-header"><i class="fas fa-cloud-showers-heavy"></i>Rain Intensity</div>
+        <div class="bento-value" id="rainGaugeText">None (0 mm)</div>
+      </div>
+
+      <div class="bento-box">
+        <div class="bento-header"><i class="fas fa-tint"></i>Water Flow</div>
+        <div class="bento-value" id="waterCurrent">0</div>
+      </div>
+
+      <div class="bento-box">
+        <div class="bento-header"><i class="fas fa-exclamation-triangle"></i>Flood Level Legend</div>
+        <div class="legend-item"><i class="fas fa-tint" style="color: #00ff59;"></i>Normal: 0–10 cm</div>
+        <div class="legend-item"><i class="fas fa-tint" style="color: #d9ff00;"></i>Alert: 11–25 cm</div>
+        <div class="legend-item"><i class="fas fa-tint" style="color: #ff9900;"></i>Warning: 26–45 cm</div>
+        <div class="legend-item"><i class="fas fa-tint" style="color: #ff0000;"></i>Danger: 46+ cm</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let lastRainValue = 0;
+    let lastRainTime = Date.now();
+
+    function getRainIntensity(mm) {
+      if (mm >= 10) return "Heavy";
+      if (mm >= 3) return "Moderate";
+      if (mm > 0) return "Light";
+      return "None";
+    }
+
+    function updateRainDisplay() {
+      const now = Date.now();
+      const secondsSinceLast = (now - lastRainTime) / 1000;
+      if (secondsSinceLast > 10 && lastRainValue > 0) {
+        lastRainValue = Math.max(0, lastRainValue - 0.2);
+      }
+      const rainIntensity = getRainIntensity(lastRainValue);
+      document.getElementById('rainGaugeText').textContent =
+        `${rainIntensity} (${lastRainValue.toFixed(2)} mm)`;
+    }
+
+    function fetchWaterLevel() {
+      fetch('http://192.168.254.137:3000/get-water-level')
+        .then(res => res.json())
+        .then(data => {
+          const level = parseFloat(data.level);
+          document.getElementById('waterLevel').textContent = `${level} cm`;
+          const statusEl = document.getElementById('waterLevelStatus');
+
+          if (level >= 45) {
+            statusEl.className = 'status danger';
+          } else if (level >= 25) {
+            statusEl.className = 'status warning';
+          } else if (level >= 11) {
+            statusEl.className = 'status alert';
+          } else {
+            statusEl.className = 'status normal';
+          }
+        });
+    }
+
+    function fetchFlow() {
+      fetch('http://192.168.254.137:3000/get-flow')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('waterCurrent').textContent = `${data.flow}`;
+        });
+    }
+
+    function fetchRain() {
+      fetch('http://192.168.254.137:3000/get-rain')
+        .then(res => res.json())
+        .then(data => {
+          const value = parseFloat((data.rain || "0").replace(" mm", ""));
+          if (!isNaN(value)) {
+            lastRainValue = value;
+            lastRainTime = Date.now();
+          }
+        });
+    }
+
+  // ✅ FIXED: get userId from localStorage, not URL
+  function reportFlood(levelType) {
+    const userId = localStorage.getItem("loggedInUserId");
+    if (!userId) {
+      console.warn("No logged-in userId, skipping report");
+      return;
+    }
+
+    fetch(`http://192.168.254.137:3000/report-${levelType}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: userId,
+        location: "Brgy. Siha, Bor. City"
+      })
+    })
+    .then(res => res.json())
+    .then(data => console.log("Flood report sent:", data))
+    .catch(err => console.error("Error reporting flood:", err));
+  }
+
+  // Poll every second
+  setInterval(fetchWaterLevel, 1000);
+  setInterval(fetchFlow, 1000);
+  setInterval(fetchRain, 1000);
+  setInterval(updateRainDisplay, 1000);
+
+  // Load once
+  window.onload = () => {
+    fetchWaterLevel();
+    fetchFlow();
+    fetchRain();
+
+    const userId = localStorage.getItem("loggedInUserId");  // ✅ from login
+    if (userId) {
+      document.getElementById("userIdText").textContent = `User ID: ${userId}`;
+      document.getElementById("historyLink").href = `History.html?userId=${encodeURIComponent(userId)}`;
+    }
+  };
+  </script>
+</body>
+</html>

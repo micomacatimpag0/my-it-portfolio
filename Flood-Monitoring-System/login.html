@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('assets/img/save.webp') no-repeat center center/cover;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Blue overlay (only on background) */
+    .background-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 75, 168, 0.6);
+      z-index: 0;
+    }
+
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2;
+    }
+
+    .logo img {
+      width: 100px;
+      height: auto;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.85); /* more solid for contrast */
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      max-width: 850px;
+      width: 90%;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .login-section, .welcome-section {
+      flex: 1;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-section {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .login-form {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .login-form h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
+      color: #004ba8;
+      letter-spacing: 1px;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.6);
+      font-size: 16px;
+      color: #333;
+      transition: 0.3s;
+    }
+
+    .input-box::placeholder {
+      color: #666;
+    }
+
+    .input-box:focus {
+      background: rgba(255, 255, 255, 0.8);
+      outline: none;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 25px;
+      background: #004ba8;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .login-btn:hover {
+      background: #003f94;
+    }
+
+    .welcome-section {
+      background: rgba(0, 75, 168, 0.3); /* subtle blue tint */
+      color:  black;
+      text-align: center;
+    }
+
+
+    .welcome-section h2 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+
+    .welcome-section p {
+      font-size: 16px;
+      max-width: 300px;
+    }
+
+    .floating-error {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #f44336;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 9999;
+    }
+
+    .floating-error.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .logo {
+        top: 10px;
+        left: 10px;
+      }
+
+      .login-section, .welcome-section {
+        padding: 30px 20px;
+      }
+
+      .logo img {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Overlay -->
+  <div class="background-overlay"></div>
+
+  <!-- Logo -->
+  <div class="logo">
+    <img src="assets/img/logo.png" alt="Your Logo" />
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="login-section">
+      <form id="loginForm" class="login-form">
+        <h2>LOGIN</h2>
+        <input type="email" id="email" placeholder="Email" class="input-box" required />
+        <input type="password" id="password" placeholder="Password" class="input-box" required />
+        <div class="options">
+          <label><input type="checkbox" /> Remember me</label>
+        </div>
+        <button type="submit" class="login-btn">LOGIN</button>
+      </form>
+    </div>
+    <div class="welcome-section">
+      <h2>Hello, Friend!</h2>
+      <p>Get started and begin your journey with us.</p>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div class="floating-error" id="errorMsg"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "flood-f330b.firebaseapp.com",
+    databaseURL: "https://flood-f330b-default-rtdb.firebaseio.com",
+    projectId: "flood-f330b",
+    storageBucket: "flood-f330b.appspot.com",
+    messagingSenderId: "863757415533",
+    appId: "1:863757415533:web:ea95c0c447a59d6e43fb64"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  const errorBox = document.getElementById("errorMsg");
+
+  function showError(message) {
+    errorBox.textContent = message;
+    errorBox.classList.add("show");
+    setTimeout(() => {
+      errorBox.classList.remove("show");
+    }, 3000);
+  }
+
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    database.ref("users").once("value")
+      .then(snapshot => {
+        let userFound = false;
+
+        snapshot.forEach(childSnapshot => {
+          const user = childSnapshot.val();
+
+          if (user.email === email) {
+            userFound = true;
+
+            if (user.password === password) {
+              const userId = childSnapshot.key;
+
+              // Store user ID
+              localStorage.setItem("loggedInUserId", userId);
+
+              // Notify backend FIRST
+              fetch("http://192.168.1.61:3000/login", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ userId, email })
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log("Server login response:", data);
+                window.location.href = "Main.html";
+              })
+              .catch(err => {
+                console.error("Server login error:", err);
+                showError("Failed to reach server.");
+              });
+
+            } else {
+              showError("Wrong password.");
+            }
+          }
+        });
+
+        if (!userFound) {
+          showError("Email does not exist.");
+        }
+      })
+      .catch(error => {
+        console.error("Firebase error:", error);
+        showError("Login error. Try again.");
+      });
+  });
+</script>
+</body>
+</html>
