@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <meta charset="UTF-8">
+    <title>User Login</title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/liquid-glass.css">
+
+</head>
+<body>
+
+<div class="hero">
+    <div class="container">
+        <h2>USER LOGIN</h2>
+
+        <form id="userForm">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Enter your Username" required>
+
+            <label>Password</label>
+            <div class="password-field">
+                <input type="password" id="password" placeholder="Enter your Password" required>
+                <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password" aria-pressed="false">
+                    <img src="/assets/icons/eye.svg" alt="" class="password-toggle-icon">
+                </button>
+            </div>
+
+            <button type="submit" class="btn-liquid">Login</button>
+        </form>
+
+        <p id="result" class="message"></p>
+
+        <hr>
+        <div class="footer">
+            Department of Environment and Natural Resources
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.getElementById('userForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const result = document.getElementById('result');
+
+    try {
+        const res = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }) 
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            result.textContent = data.message || 'Login failed';
+            result.className = 'message error';
+            return;
+        }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        result.textContent = 'Login successful!';
+        result.className = 'message success';
+
+        setTimeout(() => {
+            if (data.user.role === 'Admin') {
+                window.location.href = '/MainDashboard/AdminDashboard.html';
+            } else if ((data.user.section || '').toLowerCase() === 'utilization') {
+                window.location.href = '/MainDashboard/EvaluatorDash.html';
+            } else if ((data.user.section || '').toLowerCase() === 'rps') {
+                window.location.href = '/MainDashboard/ApprovalDash.html';
+            } else if ((data.user.section || '').toLowerCase() === 'records') {
+                window.location.href = '/MainDashboard/RecordDash.html';
+            } 
+        }, 500);
+
+        
+    } catch (err) {
+        result.textContent = 'Server error';
+        result.className = 'message error';
+    }
+});
+
+const passwordInput = document.getElementById('password');
+const togglePasswordBtn = document.getElementById('togglePassword');
+const togglePasswordIcon = togglePasswordBtn ? togglePasswordBtn.querySelector('img') : null;
+
+if (passwordInput && togglePasswordBtn) {
+    togglePasswordBtn.addEventListener('click', () => {
+        const isHidden = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+        togglePasswordBtn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+        togglePasswordBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        if (togglePasswordIcon) {
+            togglePasswordIcon.src = isHidden ? '/assets/icons/eye-slash.svg' : '/assets/icons/eye.svg';
+        }
+    });
+}
+
+
+</script>
+<script src="/scripts/liquid-glass.js"></script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    .tat-toasts {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(360px, calc(100vw - 36px));
+      pointer-events: none;
+    }
+
+    .tat-toast {
+      pointer-events: auto;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-left-width: 6px;
+      border-radius: 14px;
+      padding: 12px 12px 12px 12px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(6px);
+      transform: translateY(-6px);
+      opacity: 0;
+      animation: tatToastIn 160ms ease-out forwards, tatToastOut 420ms ease-in forwards;
+      animation-delay: 0ms, var(--tat-toast-life, 5200ms);
+    }
+
+    .tat-toast.new { border-left-color: #2E86C1; }
+    .tat-toast.warning { border-left-color: #D4AC0D; }
+    .tat-toast.breached { border-left-color: #C62828; }
+
+    .tat-toast-title {
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      color: #111827;
+      margin: 0 0 6px 0;
+    }
+
+    .tat-toast-body {
+      font-weight: 600;
+      font-size: 12px;
+      color: #334155;
+      line-height: 1.35;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    .tat-toast-meta {
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .tat-toast-close {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 900;
+      color: #0f172a;
+      padding: 0;
+      line-height: 1;
+    }
+
+    @keyframes tatToastIn {
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes tatToastOut {
+      to { transform: translateY(-6px); opacity: 0; }
+    }
+
+    @media (max-width: 520px) {
+      .tat-toasts { top: 12px; right: 12px; width: calc(100vw - 24px); }
+    }
+  </style>
+  
+</head>
+<body class="evaluator-dashboard">
+  <div id="tatToasts" class="tat-toasts" aria-live="polite" aria-atomic="false"></div>
+  <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html" class="active">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="tat-toolbar">
+      <button id="tatProcessBtn" class="tat-btn" type="button">
+        TAT Notifications
+        <span id="tatAlertBadge" class="tat-alert-badge">0</span>
+      </button>
+    </div>
+
+    <div id="userRemarks" class="user-remarks" style="display: none;">
+      <strong>Remarks:</strong> <span id="userRemarksText"></span>
+    </div>
+
+    <div class="cards">
+      <div class="card total">
+        <h3>Total Applications</h3>
+        <p id="totalApplications">0</p>
+      </div>
+      <div class="card new">
+        <h3>New Registrations</h3>
+        <p id="newRegistrations">0</p>
+      </div>
+      <div class="card renewal">
+        <h3>Renewal</h3>
+        <p id="renewalRegistrations">0</p>
+      </div>
+    </div>
+
+    <div class="status-buttons">
+      <a href="/MainDashboard/SidePANEL/progress.html?status=registered" class="status-btn registered">
+        Registered Chainsaws (<span id="registeredBtnCount">0</span>)
+      </a>
+
+      <a href="/MainDashboard/SidePANEL/progress.html?status=routed" class="status-btn routed">
+        Routed Applications (<span id="routedBtnCount">0</span>)
+      </a>
+      <a href="/MainDashboard/SidePANEL/Returned/return.html?status=returned" class="status-btn returned">
+        Returned Applications (<span id="returnedBtnCount">0</span>)
+      </a>
+    </div>
+
+    <div class="table-container">
+      <div class="recent-activity" style="max-height: 320px; overflow-y: auto;">
+        <h3>My Recent Activity</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Application No.</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Duration</th>
+              <th>Print</th>
+            </tr>
+          </thead>
+          <tbody id="recentActivityRows"></tbody>
+        </table>
+      </div>
+
+      <div class="chart-box">
+        <h3>Status Distribution</h3>
+        <div class="chart-content">
+          <div class="donut-chart" id="statusDonut"></div>
+          <ul class="chart-legend">
+            <li class="legend-item"><span class="legend-dot routed"></span> Routed: <span id="routedCount">0</span></li>
+            <li class="legend-item"><span class="legend-dot registered"></span> Registered: <span id="registeredCount">0</span></li>
+            <li class="legend-item"><span class="legend-dot returned"></span> Returned: <span id="returnedCount">0</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="weekly-trend">
+      <h3>Weekly Application Trend</h3>
+      <div class="bar-container" id="weeklyBars"></div>
+      <div class="bar-labels" id="weeklyLabels"></div>
+    </div>
+
+  </div>
+
+  <div id="tatOverlay" class="tat-overlay" aria-hidden="true">
+    <div class="tat-dialog" role="dialog" aria-modal="true" aria-labelledby="tatTitle">
+      <div class="tat-header">
+        <h3 id="tatTitle" class="tat-title">TAT Notifications</h3>
+        <button id="tatCloseBtn" class="tat-close" type="button">Close</button>
+      </div>
+      <div id="tatSummary" class="tat-summary"></div>
+      <table class="tat-table">
+        <thead>
+          <tr>
+            <th>Reg No</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>TAT Expiry</th>
+            <th>Process Remarks</th>
+          </tr>
+        </thead>
+        <tbody id="tatRows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+  const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const token = localStorage.getItem('token') || '';
+  const remarksBox = document.getElementById('userRemarks');
+  const remarksText = document.getElementById('userRemarksText');
+  const totalEl = document.getElementById('totalApplications');
+  const newEl = document.getElementById('newRegistrations');
+  const renewalEl = document.getElementById('renewalRegistrations');
+  const recentRowsEl = document.getElementById('recentActivityRows');
+  const donutEl = document.getElementById('statusDonut');
+  const routedCountEl = document.getElementById('routedCount');
+  const registeredCountEl = document.getElementById('registeredCount');
+  const returnedCountEl = document.getElementById('returnedCount');
+  const weeklyBarsEl = document.getElementById('weeklyBars');
+  const weeklyLabelsEl = document.getElementById('weeklyLabels');
+  const registeredBtnCountEl = document.getElementById('registeredBtnCount');
+  const routedBtnCountEl = document.getElementById('routedBtnCount');
+  const returnedBtnCountEl = document.getElementById('returnedBtnCount');
+  const tatProcessBtn = document.getElementById('tatProcessBtn');
+  const tatOverlay = document.getElementById('tatOverlay');
+  const tatCloseBtn = document.getElementById('tatCloseBtn');
+  const tatRows = document.getElementById('tatRows');
+  const tatSummary = document.getElementById('tatSummary');
+  const tatAlertBadge = document.getElementById('tatAlertBadge');
+  const tatToasts = document.getElementById('tatToasts');
+  let tatRecords = [];
+  const tatWarnNotified = new Set();
+  const tatBreachNotified = new Set();
+
+  const TAT_SEEN_KEY = 'denr_tat_seen_v1';
+
+  const loadSeenTatKeys = () => {
+    try {
+      const raw = localStorage.getItem(TAT_SEEN_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.keys)) return null;
+      return new Set(parsed.keys.map((k) => String(k)));
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const saveSeenTatKeys = (set) => {
+    try {
+      const keys = Array.from(set).slice(-800); // avoid unbounded growth
+      localStorage.setItem(TAT_SEEN_KEY, JSON.stringify({ keys, savedAt: Date.now() }));
+    } catch (_) {
+      // ignore storage errors
+    }
+  };
+
+  const getTatKey = (r) => {
+    // Stable-ish key even if regNo changes formatting.
+    const id = r && r.id != null ? String(r.id) : '';
+    const start = String(r && r.tatStart ? r.tatStart : '');
+    const expiry = String(r && r.tatExpiry ? r.tatExpiry : '');
+    return `${id}|${start}|${expiry}`;
+  };
+
+  const formatTimeLeft = (expiry) => {
+    if (!expiry) return '';
+    const ms = Math.max(0, expiry.getTime() - Date.now());
+    const totalMinutes = Math.floor(ms / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours <= 0) return `${minutes}m`;
+    return `${hours}h ${minutes}m`;
+  };
+
+  const formatTimeAgo = (date) => {
+    if (!date) return '';
+    const ms = Math.max(0, Date.now() - date.getTime());
+    const totalMinutes = Math.floor(ms / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours <= 0) return `${minutes}m`;
+    return `${hours}h ${minutes}m`;
+  };
+
+  const showTatToast = (kind, title, message, metaText) => {
+    if (!tatToasts) return;
+    const lifeMs = 5200;
+
+    const el = document.createElement('div');
+    el.className = `tat-toast ${kind}`;
+    el.style.setProperty('--tat-toast-life', `${lifeMs}ms`);
+
+    const t = document.createElement('div');
+    t.className = 'tat-toast-title';
+    t.textContent = title;
+
+    const p = document.createElement('p');
+    p.className = 'tat-toast-body';
+    p.textContent = message;
+
+    const meta = document.createElement('div');
+    meta.className = 'tat-toast-meta';
+
+    const left = document.createElement('span');
+    left.textContent = metaText || '';
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'tat-toast-close';
+    close.textContent = 'X';
+    close.addEventListener('click', () => {
+      el.remove();
+    });
+
+    meta.appendChild(left);
+    meta.appendChild(close);
+
+    el.appendChild(t);
+    el.appendChild(p);
+    el.appendChild(meta);
+
+    // Keep stack small.
+    while (tatToasts.childElementCount >= 4) {
+      tatToasts.firstElementChild.remove();
+    }
+
+    tatToasts.appendChild(el);
+    setTimeout(() => {
+      el.remove();
+    }, lifeMs + 650);
+  };
+
+  const showRemarks = (text) => {
+    const cleanText = String(text || '').trim();
+    if (!cleanText) return;
+    remarksText.textContent = cleanText;
+    remarksBox.style.display = 'block';
+  };
+
+  const decodeTokenUserId = () => {
+    if (!token || token.split('.').length < 2) return null;
+    try {
+      const payload = token.split('.')[1];
+      const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const json = JSON.parse(atob(normalized));
+      return json && json.id ? Number(json.id) : null;
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const tokenUserId = decodeTokenUserId();
+
+  const safeDate = (val) => {
+    const d = val ? new Date(val) : null;
+    return d && !Number.isNaN(d.getTime()) ? d : null;
+  };
+
+  const parseServerDateTime = (value) => {
+    if (!value) return null;
+    if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+    const raw = String(value).trim();
+    if (!raw) return null;
+    const mysqlMatch = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})$/);
+    if (mysqlMatch) {
+      const d = new Date(`${mysqlMatch[1]}T${mysqlMatch[2]}`);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+
+  const formatDateForPayload = (value) => {
+    if (!value) return "";
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      const ymdMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (ymdMatch) return ymdMatch[1];
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toISOString().slice(0, 10);
+  };
+
+  const formatMDY = (date) => {
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${mm}-${dd}-${date.getFullYear()}`;
+  };
+
+  const getRegType = (regNo) => {
+    if (!regNo) return "";
+    if (/\(Renewal\)/i.test(regNo)) return "Renewal";
+    if (/\(New\)/i.test(regNo)) return "New";
+    return "New";
+  };
+
+  const toStatusLabel = (approvalStatus) => {
+    if (approvalStatus === "Approved") return "Registered";
+    if (approvalStatus === "Returned") return "Returned";
+    return "Routed";
+  };
+
+  const toStatusClass = (statusLabel) => {
+    if (statusLabel === "Registered") return "registered";
+    if (statusLabel === "Returned") return "returned";
+    return "routed";
+  };
+
+  const formatDuration = (item) => {
+    const start = parseServerDateTime(item.tatStart) || safeDate(item.dateRegistered);
+    if (!start) return "N/A";
+    const isDone = item.approvalStatus === "Approved" || item.releasedStatus === "Released";
+    const end = isDone ? (parseServerDateTime(item.releasedAt) || new Date()) : new Date();
+    const diffMs = Math.max(0, end.getTime() - start.getTime());
+    const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    if (days > 0) return `${days}d ${hours}h`;
+    return `${hours}h`;
+  };
+
+  const resolveTatStatus = (record) => {
+    if (String(record.releasedStatus || '').toLowerCase() === 'released') return 'Completed';
+    const existing = String(record.tatStatus || '').trim();
+    if (existing) return existing;
+    const expiry = parseServerDateTime(record.tatExpiry);
+    if (!expiry) return 'On Track';
+    const now = new Date();
+    if (now > expiry) return 'Breached';
+    const msLeft = expiry.getTime() - now.getTime();
+    if (msLeft <= 24 * 60 * 60 * 1000) return 'Warning';
+    return 'On Track';
+  };
+
+  const pillClassForStatus = (status) => {
+    const s = String(status || '').toLowerCase();
+    if (s === 'breached') return 'breached';
+    if (s === 'warning') return 'warning';
+    if (s === 'completed') return 'completed';
+    return 'on-track';
+  };
+
+  const renderRecentActivity = (items) => {
+    if (!recentRowsEl) return;
+    recentRowsEl.innerHTML = '';
+    if (!items.length) {
+      recentRowsEl.innerHTML = '<tr><td colspan="5" style="text-align:center;">No recent activity found.</td></tr>';
+      return;
+    }
+
+    items.forEach((item) => {
+      const statusLabel = toStatusLabel(item.approvalStatus);
+      const statusClass = toStatusClass(statusLabel);
+      const dateVal = safeDate(item.dateRegistered);
+      const dateText = dateVal ? formatMDY(dateVal) : 'N/A';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="app-link">${item.regNo || "N/A"}</td>
+        <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        <td>${dateText}</td>
+        <td>${formatDuration(item)}</td>
+        <td>
+          <button type="button" class="btn btn-view print-btn" data-id="${item.id}">Print</button>
+        </td>
+      `;
+      recentRowsEl.appendChild(tr);
+    });
+
+    recentRowsEl.querySelectorAll('.print-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        const record = items.find((i) => String(i.id) === String(id));
+        if (!record) return;
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Printing...';
+        try {
+          await printPdf(record);
+        } catch (err) {
+          console.error('Print error:', err);
+          alert('Failed to generate printable PDF.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    });
+  };
+
+  const printPdf = async (record) => {
+    const formData = new FormData();
+    const data = {
+      regNo: record.regNo || "",
+      ownerName: record.ownerName || "",
+      address: record.address || "",
+      brand: record.brand || "",
+      model: record.model || "",
+      datePurchased: formatDateForPayload(record.datePurchased),
+      serialNo: record.serialNo || "",
+      horsepower: record.horsepower || "",
+      guidebar: record.guidebar || "",
+      others: record.others || "",
+      dateRegistered: formatDateForPayload(record.dateRegistered),
+      expiryDate: formatDateForPayload(record.expiryDate),
+      purpose: record.purpose || "",
+      remarks: record.remarks || "",
+      receiptNo: record.receiptNo || "",
+      orNumber: record.orNumber || "",
+      performanceEval: record.performanceEval || "",
+      recommendation: record.recommendation || "",
+      dealer: record.dealer || "",
+      evaluatedByName: record.evaluatedByName || "",
+      evaluatedByPosition: record.evaluatedByPosition || "",
+      approvedByName: record.approvedByName || "",
+      approvedByPosition: record.approvedByPosition || "",
+      recommendingApprovalName: record.recommendingApprovalName || "",
+      recommendingApprovalPosition: record.recommendingApprovalPosition || ""
+    };
+    Object.keys(data).forEach((key) => formData.append(key, data[key]));
+
+    const images = Array.isArray(record.images) ? record.images.slice(0, 10) : [];
+    for (let i = 0; i < images.length; i++) {
+      try {
+        const res = await fetch(images[i]);
+        const blob = await res.blob();
+        formData.append(`img${i + 1}`, blob, `image${i + 1}.jpg`);
+      } catch (err) {
+        console.error("Image fetch failed:", err);
+      }
+    }
+
+    const res = await fetch("/generate-pdf", { method: "POST", body: formData });
+    if (!res.ok) throw new Error("PDF generation failed");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const win = window.open(url, "_blank");
+    if (win) {
+      win.focus();
+      setTimeout(() => {
+        try { win.print(); } catch (_) {}
+      }, 500);
+    }
+  };
+
+  const renderStatusDistribution = (items) => {
+    const totals = { Routed: 0, Registered: 0, Returned: 0 };
+    items.forEach((item) => {
+      const label = toStatusLabel(item.approvalStatus);
+      totals[label] += 1;
+    });
+
+    if (routedCountEl) routedCountEl.textContent = totals.Routed;
+    if (registeredCountEl) registeredCountEl.textContent = totals.Registered;
+    if (returnedCountEl) returnedCountEl.textContent = totals.Returned;
+    if (routedBtnCountEl) routedBtnCountEl.textContent = totals.Routed;
+    if (registeredBtnCountEl) registeredBtnCountEl.textContent = totals.Registered;
+    if (returnedBtnCountEl) returnedBtnCountEl.textContent = totals.Returned;
+
+    const sum = totals.Routed + totals.Registered + totals.Returned;
+    const routedPct = sum ? (totals.Routed / sum) * 100 : 0;
+    const regPct = sum ? (totals.Registered / sum) * 100 : 0;
+
+    if (donutEl) {
+      donutEl.style.background = `conic-gradient(
+        #27AE60 0% ${routedPct}%,
+        #2E86C1 ${routedPct}% ${routedPct + regPct}%,
+        #D4AC0D ${routedPct + regPct}% 100%
+      )`;
+    }
+  };
+
+  const renderWeeklyTrend = (items) => {
+    if (!weeklyBarsEl || !weeklyLabelsEl) return;
+    weeklyBarsEl.innerHTML = '';
+    weeklyLabelsEl.innerHTML = '';
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const counts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
+
+    const today = new Date();
+    const weekAgo = new Date();
+    weekAgo.setDate(today.getDate() - 6);
+    weekAgo.setHours(0, 0, 0, 0);
+
+    items.forEach((item) => {
+      const dateVal = safeDate(item.dateRegistered);
+      if (!dateVal || dateVal < weekAgo) return;
+      const label = days[(dateVal.getDay() + 6) % 7];
+      counts[label] += 1;
+    });
+
+    const max = Math.max(...Object.values(counts), 1);
+    days.forEach((label) => {
+      const value = counts[label];
+      const pct = Math.round((value / max) * 100);
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = `${pct}%`;
+      bar.setAttribute('data-value', String(value));
+      weeklyBarsEl.appendChild(bar);
+
+      const span = document.createElement('span');
+      span.textContent = label;
+      weeklyLabelsEl.appendChild(span);
+    });
+  };
+
+  const renderTatRows = (records) => {
+    tatRows.innerHTML = '';
+    if (!records.length) {
+      tatRows.innerHTML = '<tr><td colspan="5">No TAT records found.</td></tr>';
+      tatSummary.textContent = 'On Track: 0 | Warning: 0 | Breached: 0 | Completed: 0';
+      return;
+    }
+
+    const onTrackCount = records.filter((r) => resolveTatStatus(r) === 'On Track').length;
+    const warningCount = records.filter((r) => resolveTatStatus(r) === 'Warning').length;
+    const breachedCount = records.filter((r) => resolveTatStatus(r) === 'Breached').length;
+    const completedCount = records.filter((r) => resolveTatStatus(r) === 'Completed').length;
+    tatSummary.textContent = `On Track: ${onTrackCount} | Warning: ${warningCount} | Breached: ${breachedCount} | Completed: ${completedCount}`;
+
+    records.forEach((r) => {
+      const status = resolveTatStatus(r);
+      const expiry = parseServerDateTime(r.tatExpiry);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.regNo || ''}</td>
+        <td>${r.ownerName || ''}</td>
+        <td><span class="tat-pill ${pillClassForStatus(status)}">${status}</span></td>
+        <td>${expiry ? expiry.toLocaleString() : '-'}</td>
+        <td>${r.processRemarks || '-'}</td>
+      `;
+      tatRows.appendChild(tr);
+    });
+  };
+
+  const updateTatBadge = (records) => {
+    const activeCount = Array.isArray(records) ? records.length : 0;
+    tatAlertBadge.textContent = String(activeCount);
+    tatAlertBadge.classList.toggle('has-alert', activeCount > 0);
+  };
+
+  const openTatPopup = () => {
+    renderTatRows(tatRecords);
+    tatOverlay.style.display = 'block';
+    tatOverlay.setAttribute('aria-hidden', 'false');
+  };
+
+  const closeTatPopup = () => {
+    tatOverlay.style.display = 'none';
+    tatOverlay.setAttribute('aria-hidden', 'true');
+  };
+
+  const loadDashboard = async () => {
+    try {
+      const res = await fetch('/registrations/evaluation');
+      if (!res.ok) {
+        throw new Error(`Failed to load /registrations/evaluation (HTTP ${res.status})`);
+      }
+      const rows = await res.json();
+      const list = Array.isArray(rows) ? rows : [];
+      const items = tokenUserId ? list.filter((item) => Number(item.evaluatedBy_id) === Number(tokenUserId)) : list;
+      
+      if (totalEl) totalEl.textContent = String(list.length);
+      if (newEl) newEl.textContent = String(items.filter((item) => getRegType(item.regNo) === 'New').length);
+      if (renewalEl) renewalEl.textContent = String(items.filter((item) => getRegType(item.regNo) === 'Renewal').length);
+
+      const printable = items.filter((item) => String(item.forPrintStatus || "").toLowerCase() === "approved");
+      const recent = [...printable].sort((a, b) => {
+        const aDate = safeDate(a.dateRegistered);
+        const bDate = safeDate(b.dateRegistered);
+        return (bDate ? bDate.getTime() : 0) - (aDate ? aDate.getTime() : 0);
+      }).slice(0, 5);
+
+      renderRecentActivity(recent);
+      renderStatusDistribution(items);
+      renderWeeklyTrend(items);
+
+      const now = Date.now();
+      tatRecords = items.filter((r) => Boolean(r.tatExpiry));
+      updateTatBadge(tatRecords);
+
+      // Toast notifications: new TAT + almost due (warning) / breached.
+      // On first run (no saved set), seed without spamming.
+      const prevSeen = loadSeenTatKeys();
+      const isFirstRun = !prevSeen;
+      const seen = prevSeen || new Set();
+
+      const newOnes = [];
+      const warnOnes = [];
+      const breachedOnes = [];
+
+      tatRecords.forEach((r) => {
+        const key = getTatKey(r);
+        if (!seen.has(key)) newOnes.push(r);
+        seen.add(key);
+
+        const status = resolveTatStatus(r);
+        if (status === 'Warning' && !tatWarnNotified.has(key)) warnOnes.push(r);
+        if (status === 'Breached' && !tatBreachNotified.has(key)) breachedOnes.push(r);
+      });
+
+      saveSeenTatKeys(seen);
+
+      if (!isFirstRun) {
+        // New TAT notifications (limit 2 per refresh).
+        newOnes.slice(0, 2).forEach((r) => {
+          const expiry = parseServerDateTime(r.tatExpiry);
+          const meta = expiry ? `Expires in ${formatTimeLeft(expiry)}` : '';
+          showTatToast(
+            'new',
+            'New TAT Assigned',
+            `${r.regNo || ''}${r.ownerName ? ` · ${r.ownerName}` : ''}`.trim(),
+            meta
+          );
+        });
+
+        // Almost due (warning) notifications (limit 2 per refresh).
+        warnOnes.slice(0, 2).forEach((r) => {
+          tatWarnNotified.add(getTatKey(r));
+          const expiry = parseServerDateTime(r.tatExpiry);
+          const meta = expiry ? `Due in ${formatTimeLeft(expiry)}` : '';
+          showTatToast(
+            'warning',
+            'TAT Almost Due',
+            `${r.regNo || ''}${r.ownerName ? ` · ${r.ownerName}` : ''}`.trim(),
+            meta
+          );
+        });
+
+        // Breached notifications (limit 1 per refresh).
+        breachedOnes.slice(0, 1).forEach((r) => {
+          tatBreachNotified.add(getTatKey(r));
+          const expiry = parseServerDateTime(r.tatExpiry);
+          const meta = expiry ? `Expired ${formatTimeAgo(expiry)} ago` : 'Expired';
+          showTatToast(
+            'breached',
+            'TAT Breached',
+            `${r.regNo || ''}${r.ownerName ? ` · ${r.ownerName}` : ''}`.trim(),
+            meta
+          );
+        });
+      }
+    } catch (err) {
+      console.error('Evaluator dashboard load error:', err);
+      if (totalEl) totalEl.textContent = '0';
+      if (newEl) newEl.textContent = '0';
+      if (renewalEl) renewalEl.textContent = '0';
+      if (recentRowsEl) {
+        recentRowsEl.innerHTML =
+          '<tr><td colspan="4" style="text-align:center;">Unable to load dashboard data. Make sure the server is running and the database is reachable.</td></tr>';
+      }
+      renderStatusDistribution([]);
+      renderWeeklyTrend([]);
+      tatRecords = [];
+      updateTatBadge([]);
+    }
+  };
+  const localRemarks = String(loggedInUser.remarks || '').trim();
+  if (localRemarks) {
+    showRemarks(localRemarks);
+  } else {
+    fetch('/users/list')
+      .then((res) => res.ok ? res.json() : [])
+      .then((users) => {
+        const matchedUser = users.find((u) => {
+          if (tokenUserId && Number(u.id) === Number(tokenUserId)) return true;
+          if (loggedInUser.id && Number(u.id) === Number(loggedInUser.id)) return true;
+          if (loggedInUser.username && String(u.username || '').toLowerCase() === String(loggedInUser.username).toLowerCase()) return true;
+          if (loggedInUser.fullname && String(u.full_name || '').toLowerCase() === String(loggedInUser.fullname).toLowerCase()) return true;
+          return false;
+        });
+
+        const fetchedRemarks = matchedUser ? String(matchedUser.remarks || '').trim() : '';
+        if (!fetchedRemarks) return;
+        showRemarks(fetchedRemarks);
+        localStorage.setItem('user', JSON.stringify({ ...loggedInUser, remarks: fetchedRemarks }));
+      })
+      .catch(() => {
+        // Keep dashboard usable even if remarks lookup fails.
+      });
+  }
+
+  tatProcessBtn.addEventListener('click', openTatPopup);
+  tatCloseBtn.addEventListener('click', closeTatPopup);
+  tatOverlay.addEventListener('click', (e) => {
+    if (e.target === tatOverlay) closeTatPopup();
+  });
+
+  loadDashboard();
+  setInterval(loadDashboard, 60000);
+</script>
+</body>
+</html>

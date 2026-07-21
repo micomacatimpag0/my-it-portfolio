@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS - Returned</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/evalution.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body class="returned-page">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+      </div>
+      <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html" class="active">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/index.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <main class="main">
+
+
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h1>Returned Registrations</h1>
+      </div>
+
+      <div class="filters">
+        <label for="searchInput">Search:</label>
+        <input id="searchInput" class="filter-search" type="text" placeholder="Search reg no, owner, serial">
+        <label for="dateFilter">Filter by Date:</label>
+        <select id="dateFilter" class="filter-select">
+          <option value="all">All</option>
+          <option value="week">Past 1 Week</option>
+          <option value="month">Past 1 Month</option>
+          <option value="year">Past 1 Year</option>
+        </select>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Registration No.</th>
+              <th>Name of Owner</th>
+              <th>Serial No.</th>
+              <th>Brand/Model</th>
+              <th>Status</th>
+              <th>Recommending Approval Comment</th>
+              <th>Approved By Comment</th>
+            </tr>
+          </thead>
+          <tbody id="returnedRows">
+            <tr><td colspan="7" style="text-align:center;">Loading returned records...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div id="editOverlay" class="popup-overlay" aria-hidden="true">
+    <div class="popup-dialog edit-dialog" role="dialog" aria-modal="true">
+      <h3 class="popup-title">Re-evaluate Returned File</h3>
+      <form id="editForm" class="registration-form">
+        <div class="input-grid">
+          <div class="form-row"><div class="input-label">Registration No.</div><input type="text" name="regNo" readonly></div>
+          <div class="form-row"><div class="input-label">Name of Owner</div><input type="text" name="ownerName"></div>
+          <div class="form-row"><div class="input-label">Address</div><input type="text" name="address"></div>
+          <div class="form-row"><div class="input-label">Use of chainsaw</div><input type="text" name="useCase"></div>
+          <div class="form-row"><div class="input-label">Brand</div><input type="text" name="brand"></div>
+          <div class="form-row"><div class="input-label">Model</div><input type="text" name="model"></div>
+          <div class="form-row"><div class="input-label">Date of Acquisition</div><input type="date" name="dateAcquired"></div>
+          <div class="form-row"><div class="input-label">Serial No.</div><input type="text" name="serialNo"readonly></div>
+          <div class="form-row"><div class="input-label">Horsepower</div><input type="number" step="0.1" min="0" name="horsepower"></div>
+          <div class="form-row"><div class="input-label">Max. Guidebar</div><input type="number" step="0.1" min="0" name="guidebar"></div>
+          <div class="form-row"><div class="input-label">Others</div><input type="text" name="others"></div>
+          <div class="form-row"><div class="input-label">Issued on</div><input type="date" name="issuedOn" readonly></div>
+          <div class="form-row"><div class="input-label">Expiry Date</div><input type="date" name="expiryDate" readonly></div>
+          <div class="form-row"><div class="input-label">Approved by</div><input type="text" name="approvedBy" readonly></div>
+          <div class="form-row"><div class="input-label">Position</div><input type="text" name="position" readonly></div>
+
+          <div class="form-row"><div class="input-label">Remarks</div><input type="text" name="remarks"></div>
+          <div class="form-row"><div class="input-label">Receipt No.</div><input type="text" name="receiptNo"></div>
+          <div class="form-row"><div class="input-label">OR Number</div><input type="text" name="orNumber"></div>
+          <div class="form-row"><div class="input-label">Performance Eval</div><input type="text" name="performanceEval"></div>
+          <div class="form-row"><div class="input-label">Recommendation</div><input type="text" name="recommendation"></div>
+          <div class="form-row"><div class="input-label">Dealer</div><input type="text" name="dealer"></div>
+          <div class="form-row"><div class="input-label">Evaluated by</div><input type="text" name="evaluatedByName" readonly></div>
+          <div class="form-row"><div class="input-label">Evaluator Position</div><input type="text" name="evaluatedByPosition" readonly></div>
+          <input type="hidden" name="evaluatedBy_id">
+          <input type="hidden" name="approvedBy_id">
+          <input type="hidden" name="recommendingApproval_id">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="cancelEditBtn" class="popup-btn" style="background:#64748b;">Cancel</button>
+          <button type="submit" id="nextEditBtn" class="popup-btn">Next</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+
+    // Assume each row or "Next" button has a data-id attribute with the registrationId
+document.querySelectorAll(".next-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+        const registrationId = btn.dataset.id; // get ID of clicked user
+        if (!registrationId) return;
+
+        try {
+            const res = await fetch(`/registrations/evaluation`);
+            if (!res.ok) throw new Error("Failed to fetch registration data");
+            const registrations = await res.json();
+
+            const registration = registrations.find(r => r.id == registrationId);
+            if (!registration) return;
+
+            // Populate preview boxes for this registration
+            registration.images.forEach((imgObj, i) => {
+                const preview = document.getElementById(`preview${i+1}`);
+                if (!preview) return;
+                preview.innerHTML = ""; // clear previous content
+
+                const img = document.createElement("img");
+                img.src = imgObj.filepath; // server path
+                img.style.width = "150px";
+                img.style.height = "100px";
+                img.style.objectFit = "cover";
+                img.style.border = "2px solid #ccc";
+                img.style.borderRadius = "4px";
+                preview.appendChild(img);
+            });
+        } catch (err) {
+            console.error("Error loading previews:", err);
+        }
+    });
+});
+
+    const rowsEl = document.getElementById("returnedRows");
+    const searchInput = document.getElementById("searchInput");
+    const editOverlay = document.getElementById("editOverlay");
+    const editForm = document.getElementById("editForm");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const nextEditBtn = document.getElementById("nextEditBtn");
+    const dateFilter = document.getElementById("dateFilter");
+
+    let allReturned = [];
+    let editingId = null;
+
+    const token = localStorage.getItem("token") || "";
+    const loggedInUser = JSON.parse(localStorage.getItem("user")) || {};
+    const toNullableFkId = (value) => {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed) || parsed <= 0) return null;
+      return Math.trunc(parsed);
+    };
+    const decodeTokenUserId = () => {
+      if (!token || token.split(".").length < 2) return null;
+      try {
+        const payload = token.split(".")[1];
+        const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+        const json = JSON.parse(atob(normalized));
+        return json && json.id ? Number(json.id) : null;
+      } catch (_) {
+        return null;
+      }
+    };
+    const currentEvaluatorId = toNullableFkId(loggedInUser.id || decodeTokenUserId());
+    const currentEvaluatorName = String(loggedInUser.fullname || loggedInUser.full_name || "").trim();
+    const currentEvaluatorPosition = String(loggedInUser.position || "").trim();
+
+    const esc = (v) => String(v ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+    const toDateInput = (val) => {
+      if (!val) return "";
+      const d = new Date(val);
+      if (Number.isNaN(d.getTime())) return "";
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const renderRows = (items) => {
+      if (!rowsEl) return;
+      if (!items.length) {
+        rowsEl.innerHTML = '<tr><td colspan="5" style="text-align:center;">No returned registrations found.</td></tr>';
+        return;
+      }
+
+      rowsEl.innerHTML = items.map((item) => {
+        const brandModel = `${item.brand || ""} ${item.model || ""}`.trim() || "N/A";
+        return `
+          <tr data-id="${esc(item.id)}">
+            <td class="clickable-cell"><strong>${esc(item.regNo || "N/A")}</strong></td>
+            <td class="clickable-cell">${esc(item.ownerName || "")}</td>
+            <td class="clickable-cell">${esc(item.serialNo || "")}</td>
+            <td class="clickable-cell">${esc(brandModel)}</td>
+            <td class="clickable-cell"><span class="badge status-returned">Returned</span></td>
+            <td class="clickable-cell">${esc(item.recommendingApproval || "")}</td>
+            <td class="clickable-cell">${esc(item.approvedByComment || "")}</td>
+          </tr>
+        `;
+      }).join("");
+    };
+
+    const applySearch = () => {
+      const q = (searchInput?.value || "").trim().toLowerCase();
+      const range = (dateFilter?.value || "all").toLowerCase();
+
+      const filtered = allReturned.filter((item) => {
+        if (range !== "all") {
+          const dateVal = item.dateRegistered || item.tatStart;
+          if (!dateVal) return false;
+          const now = new Date();
+          const cutoff = new Date(now);
+          if (range === "week") cutoff.setDate(now.getDate() - 7);
+          if (range === "month") cutoff.setMonth(now.getMonth() - 1);
+          if (range === "year") cutoff.setFullYear(now.getFullYear() - 1);
+          if (new Date(dateVal) < cutoff) return false;
+        }
+        if (!q) return true;
+        const haystack = [item.regNo, item.ownerName, item.serialNo]
+          .map((v) => String(v || "").toLowerCase())
+          .join(" ");
+        return haystack.includes(q);
+      });
+      renderRows(filtered);
+    };
+
+    const setFormValue = (name, value) => {
+      const el = editForm.elements[name];
+      if (!el) return;
+      el.value = value ?? "";
+    };
+
+    const openEdit = (item) => {
+      editingId = item.id;
+      setFormValue("regNo", item.regNo || "");
+      setFormValue("ownerName", item.ownerName || "");
+      setFormValue("address", item.address || "");
+      setFormValue("useCase", item.purpose || "");
+      setFormValue("brand", item.brand || "");
+      setFormValue("model", item.model || "");
+      setFormValue("dateAcquired", toDateInput(item.datePurchased));
+      setFormValue("serialNo", item.serialNo || "");
+      setFormValue("horsepower", item.horsepower || "");
+      setFormValue("guidebar", item.guidebar || "");
+      setFormValue("others", item.others || "");
+      setFormValue("issuedOn", toDateInput(item.dateRegistered));
+      setFormValue("expiryDate", toDateInput(item.expiryDate));
+      setFormValue("approvedBy", item.approvedByName || "");
+      setFormValue("position", item.approvedByPosition || "");
+      setFormValue("approvedBy_id", item.approvedBy_id || "");
+      setFormValue("recommendingApproval_id", item.recommendingApproval_id || "");
+      setFormValue("remarks", item.remarks || "");
+      setFormValue("receiptNo", item.receiptNo || "");
+      setFormValue("orNumber", item.orNumber || "");
+      setFormValue("performanceEval", item.performanceEval || "");
+      setFormValue("recommendation", item.recommendation || "");
+      setFormValue("dealer", item.dealer || "");
+      setFormValue("evaluatedByName", (currentEvaluatorName || item.evaluatedByName || "").toUpperCase());
+      setFormValue("evaluatedByPosition", currentEvaluatorPosition || item.evaluatedByPosition || "");
+      setFormValue("evaluatedBy_id", currentEvaluatorId);
+
+      editOverlay.classList.add("show");
+      editOverlay.setAttribute("aria-hidden", "false");
+    };
+
+    const closeEdit = () => {
+      editingId = null;
+      editOverlay.classList.remove("show");
+      editOverlay.setAttribute("aria-hidden", "true");
+    };
+
+    editForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!editingId) return;
+
+      const fd = new FormData(editForm);
+      const payload = {
+        regNo: fd.get("regNo") || "",
+        ownerName: fd.get("ownerName") || "",
+        address: fd.get("address") || "",
+        purpose: fd.get("useCase") || "",
+        brand: fd.get("brand") || "",
+        model: fd.get("model") || "",
+        datePurchased: fd.get("dateAcquired") || null,
+        serialNo: fd.get("serialNo") || "",
+        horsepower: fd.get("horsepower") || null,
+        guidebar: fd.get("guidebar") || null,
+        others: fd.get("others") || "",
+        dateRegistered: fd.get("issuedOn") || null,
+        expiryDate: fd.get("expiryDate") || null,
+        approvedByName: fd.get("approvedBy") || "",
+        approvedByPosition: fd.get("position") || "",
+        remarks: fd.get("remarks") || "",
+        receiptNo: fd.get("receiptNo") || "",
+        orNumber: fd.get("orNumber") || "",
+        performanceEval: fd.get("performanceEval") || "",
+        recommendation: fd.get("recommendation") || "",
+        dealer: fd.get("dealer") || "",
+        evaluatedByName: fd.get("evaluatedByName") || "",
+        evaluatedByPosition: fd.get("evaluatedByPosition") || "",
+        evaluatedBy_id: fd.get("evaluatedBy_id") || null,
+        approvedBy_id: fd.get("approvedBy_id") || null,
+        recommendingApproval_id: fd.get("recommendingApproval_id") || null
+      };
+
+      try {
+        nextEditBtn.disabled = true;
+        const res = await fetch(`/registrations/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Update failed");
+
+        const reevaluateData = {
+          regNo: payload.regNo,
+          ownerName: payload.ownerName,
+          address: payload.address,
+          useCase: payload.purpose,
+          brand: payload.brand,
+          model: payload.model,
+          dateAcquired: payload.datePurchased || "",
+          serialNo: payload.serialNo,
+          horsepower: payload.horsepower,
+          guidebar: payload.guidebar,
+          others: payload.others,
+          issuedOn: payload.dateRegistered || "",
+          expiryDate: payload.expiryDate || "",
+          approvedBy: payload.approvedByName,
+          position: payload.approvedByPosition,
+          regType: /\(renewal\)\s*$/i.test(String(payload.regNo || "")) ? "Renewal" : "New",
+          evaluatedBy_id: payload.evaluatedBy_id,
+          approvedBy_id: payload.approvedBy_id,
+          recommendingApproval_id: payload.recommendingApproval_id,
+          reevaluateRegistrationId: editingId
+        };
+
+        const inspectionData = {
+          purpose: payload.purpose,
+          remarks: payload.remarks,
+          receiptNo: payload.receiptNo,
+          orNumber: payload.orNumber,
+          performanceEval: payload.performanceEval,
+          recommendation: payload.recommendation,
+          dealer: payload.dealer
+        };
+
+        localStorage.setItem("chainsawFormData", JSON.stringify(reevaluateData));
+        localStorage.setItem("inspectionFormData", JSON.stringify(inspectionData));
+        localStorage.setItem("returnedReevaluationContext", JSON.stringify({ registrationId: editingId }));
+
+        window.location.href = `/MainDashboard/SidePANEL/Returned/upload_returned.html?registrationId=${encodeURIComponent(editingId)}`;
+      } catch (err) {
+        console.error("Update error:", err);
+        alert(err.message || "Failed to proceed to file update.");
+      } finally {
+        nextEditBtn.disabled = false;
+      }
+    });
+
+    if (cancelEditBtn) cancelEditBtn.addEventListener("click", closeEdit);
+    if (editOverlay) {
+      editOverlay.addEventListener("click", (e) => {
+        if (e.target === editOverlay) closeEdit();
+      });
+    }
+
+    rowsEl.addEventListener("click", (e) => {
+      const cell = e.target.closest("td.clickable-cell");
+      if (!cell) return;
+      const tr = cell.closest("tr[data-id]");
+      if (!tr) return;
+      const id = tr.getAttribute("data-id");
+      const item = allReturned.find((r) => String(r.id) === String(id));
+      if (!item) return;
+      openEdit(item);
+    });
+
+    const loadReturned = async () => {
+      try {
+        const res = await fetch("/registrations/evaluation");
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : [];
+        allReturned = items.filter((item) => (item.approvalStatus || "").toLowerCase() === "returned");
+        applySearch();
+      } catch (err) {
+        console.error("Failed to load returned registrations:", err);
+        rowsEl.innerHTML = '<tr><td colspan="5" style="text-align:center;">Failed to load returned records.</td></tr>';
+      }
+    };
+
+    if (searchInput) searchInput.addEventListener("input", applySearch);
+    if (dateFilter) dateFilter.addEventListener("change", applySearch);
+    loadReturned();
+  </script>
+</body>
+</html>

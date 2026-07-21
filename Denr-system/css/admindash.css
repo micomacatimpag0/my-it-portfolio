@@ -1,0 +1,171 @@
+#tatNotifications {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.tat-notification-stack {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tat-notification {
+  background: #ffffff;
+  border-left: 5px solid #f39c12;
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  animation: tatPopFade 320ms ease-out forwards;
+}
+
+.tat-notification.overdue {
+  border-left-color: #e74c3c;
+  background: #fff5f5;
+}
+
+.tat-notification.near-due {
+  background: #fffdf5;
+}
+
+.tat-title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.tat-lines {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #334155;
+}
+
+@keyframes tatPopFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#winToastContainer {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 420px;        /* bigger width */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 9999;
+}
+
+.win-toast {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 22px 24px;   /* more padding */
+  box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+  font-family: "Segoe UI", sans-serif;
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
+  transform: translateX(60px);
+  min-height: 110px;    /* taller */
+}
+
+.win-toast-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #111827;
+}
+
+.win-toast-body {
+  font-size: 13px;
+  color: #374151;
+}
+
+.win-toast.overdue {
+  border-left: 5px solid #e74c3c;
+}
+
+.win-toast.near {
+  border-left: 5px solid #f39c12;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container for the logo (centered above text) */
+.sidebar-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.sidebar-logo img {
+  width: 80px; /* Adjust size to fit your logo */
+  height: auto;
+}
+
+.sidebar h2 {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #333;
+  text-align: center; /* Ensures text is centered */
+  font-weight: bold;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.sidebar ul {
+  list-style: none;
+  
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+  font-family: sans-serif;
+  font-size: 15px;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background-color: #e0f0ff;
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>RECORDS</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/RecordDash.html" class="active">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/backup.html">Backup Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    
+    <div class="cards">
+      <div class="card total">
+        <h3>Total Applications</h3>
+        <p id="totalApplications">0</p>
+      </div>
+      <div class="card new">
+        <h3>New Registrations</h3>
+        <p id="newRegistrations">0</p>
+      </div>
+      <div class="card renewal">
+        <h3>Renewal</h3>
+        <p id="renewalApplications">0</p>
+      </div>
+    </div>
+
+    <div class="status-buttons">
+      <button class="status-btn registered">Registered Chainsaws</button>
+      <button class="status-btn routed">Routed Applications</button>
+      <button class="status-btn returned">Returned Applications</button>
+    </div>
+
+    <div class="dashboard-row">
+  <div class="chart-box">
+    <h3>Status Distribution</h3>
+    <div class="chart-content">
+      <div class="donut-chart"></div>
+      <ul class="chart-legend">
+        <li class="legend-item"><span class="legend-dot routed"></span> Routed</li>
+        <li class="legend-item"><span class="legend-dot registered"></span> Registered</li>
+        <li class="legend-item"><span class="legend-dot returned"></span> Returned</li>
+      </ul>
+    </div>  
+  </div>
+
+  <div class="weekly-trend">
+    <h3>Weekly Application Trend</h3>
+      <div class="bar-container">
+        <div class="bar" data-day="Mon"></div>
+        <div class="bar" data-day="Tue"></div>
+        <div class="bar" data-day="Wed"></div>
+        <div class="bar" data-day="Thu"></div>
+        <div class="bar" data-day="Fri"></div>
+      </div>
+      <div class="bar-labels">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+      </div>
+  </div>
+</div>
+
+  </div>
+<script>
+async function fetchDashboardData() {
+  try {
+    
+    const year = new Date().getFullYear();
+    const resCount = await fetch(`/registrations/count/${year}`);
+    const countData = await resCount.json();
+    document.getElementById('totalApplications').textContent = countData.count || 0;
+
+    
+    const resRegistrations = await fetch(`/registrations/evaluation`);
+    const registrations = await resRegistrations.json();
+
+    
+    let newCount = 0, renewalCount = 0;
+    registrations.forEach(reg => {
+      if (reg.regType?.toLowerCase() === 'renewal') renewalCount++;
+      else newCount++;
+    });
+    document.getElementById('newRegistrations').textContent = newCount;
+    document.getElementById('renewalApplications').textContent = renewalCount;
+
+    
+    const statusMap = { registered: 0, routed: 0, returned: 0 };
+    registrations.forEach(reg => {
+      const status = (reg.approvalStatus || '').toLowerCase();
+      if (status === 'approved') statusMap.registered++;
+      else if (status === 'pending') statusMap.routed++;
+      else if (status === 'returned') statusMap.returned++;
+    });
+
+    
+    const total = statusMap.registered + statusMap.routed + statusMap.returned || 1;
+    document.querySelector('.donut-chart').style.background = `conic-gradient(
+      #4caf50 ${statusMap.registered / total * 360}deg,
+      #2196f3 ${statusMap.routed / total * 360}deg,
+      #f44336 ${statusMap.returned / total * 360}deg
+    )`;
+
+  } catch (err) {
+    console.error("Dashboard fetch error:", err);
+  }
+}
+
+async function updateWeeklyTrend() {
+  try {
+    const year = new Date().getFullYear();
+    const res = await fetch('/registrations/evaluation');
+    const registrations = await res.json();
+
+    const counts = [0, 0, 0, 0, 0]; 
+
+    registrations.forEach(reg => {
+      if (!reg.dateRegistered) return;
+
+      const d = new Date(reg.dateRegistered);
+
+      
+      if (d.getFullYear() !== year) return;
+
+      const day = d.getDay(); 
+      if (day >= 1 && day <= 5) {
+        counts[day - 1]++;
+      }
+    });
+
+    const maxCount = Math.max(...counts) || 1;
+
+    document.querySelectorAll('.bar-container .bar').forEach((bar, i) => {
+      const percent = (counts[i] / maxCount) * 100;
+      bar.style.height = percent + '%';
+      bar.setAttribute("title", counts[i] + " applications");
+    });
+
+  } catch (err) {
+    console.error("Weekly trend error:", err);
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetchDashboardData();
+  updateWeeklyTrend();
+});
+
+</script>
+
+</body>
+</html

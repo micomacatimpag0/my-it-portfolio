@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/liquid-glass.css">
+  
+
+ <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+
+</head>
+<div id="winToastContainer"></div>
+<body class="admin-dashboard">
+  <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>ADMIN</span></h2>
+        
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/AdminDashboard.html" class="active">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Forprinting.html">For Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/approval.html">Approval</a></li>
+      <li><a href="/MainDashboard/SidePANEL/registered.html">Registered</a></li>
+      <li><a href="/Auth/adduser.html">Add Employee</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="tat-toolbar">
+      <button id="tatProcessBtn" class="tat-btn" type="button">
+        TAT Notifications
+        <span id="tatAlertBadge" class="tat-alert-badge">0</span>
+      </button>
+    </div>
+    <div class="cards">
+      <div class="card total">
+        <h3>Total Applications</h3>
+        <p id="totalApplications">0</p>
+      </div>
+      <div class="card new">
+        <h3>New Registrations</h3>
+        <p id="newRegistrations">0</p>
+      </div>
+      <div class="card renewal">
+        <h3>Renewal</h3>
+        <p id="renewalRegistrations">0</p>
+      </div>
+    </div>
+
+    <div class="status-buttons">
+      <a href="/MainDashboard/SidePANEL/registered.html?status=registered" class="status-btn registered">
+        Registered Chainsaws (<span id="registeredBtnCount">0</span>)
+      </a>
+      <a href="/MainDashboard/SidePANEL/approval.html?status=pending" class="status-btn routed">
+        Routed Applications (<span id="routedBtnCount">0</span>)
+      </a>
+      <a href="/MainDashboard/SidePANEL/Returned/return.html?status=returned" class="status-btn returned">
+        Returned Applications (<span id="returnedBtnCount">0</span>)
+      </a>
+    </div>
+
+    <div class="table-container">
+      <div class="recent-activity">
+        <h3>Recent Activity</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Application No.</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody id="recentActivityRows"></tbody>
+        </table>
+      </div>
+
+      <div class="chart-box">
+        <h3>Status Distribution</h3>
+        <div class="chart-content">
+          <div class="donut-chart" id="statusDonut"></div>
+          <ul class="chart-legend">
+            <li class="legend-item"><span class="legend-dot routed"></span> Routed: <span id="routedCount">0</span></li>
+            <li class="legend-item"><span class="legend-dot registered"></span> Registered: <span id="registeredCount">0</span></li>
+            <li class="legend-item"><span class="legend-dot returned"></span> Returned: <span id="returnedCount">0</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="weekly-trend">
+      <h3>Weekly Application Trend</h3>
+      <div class="bar-container" id="weeklyBars"></div>
+      <div class="bar-labels" id="weeklyLabels"></div>
+    </div>
+
+  </div>
+  <div id="tatOverlay" class="tat-overlay" aria-hidden="true">
+    <div class="tat-dialog" role="dialog" aria-modal="true" aria-labelledby="tatTitle">
+      <div class="tat-header">
+        <h3 id="tatTitle" class="tat-title">TAT Notifications</h3>
+        <button id="tatCloseBtn" class="tat-close" type="button">Close</button>
+      </div>
+      <div id="tatSummary" class="tat-summary"></div>
+      <table class="tat-table">
+        <thead>
+          <tr>
+            <th>Reg No</th>
+            <th>Owner</th>
+            <th>Evaluator</th>
+            <th>Status</th>
+            <th>TAT Expiry</th>
+            <th>Process Remarks</th>
+          </tr>
+        </thead>
+        <tbody id="tatRows"></tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const totalEl = document.getElementById("totalApplications");
+      const newEl = document.getElementById("newRegistrations");
+      const renewalEl = document.getElementById("renewalRegistrations");
+      const recentRowsEl = document.getElementById("recentActivityRows");
+      const donutEl = document.getElementById("statusDonut");
+      const routedCountEl = document.getElementById("routedCount");
+      const registeredCountEl = document.getElementById("registeredCount");
+      const returnedCountEl = document.getElementById("returnedCount");
+      const weeklyBarsEl = document.getElementById("weeklyBars");
+      const weeklyLabelsEl = document.getElementById("weeklyLabels");
+      const registeredBtnCountEl = document.getElementById("registeredBtnCount");
+      const routedBtnCountEl = document.getElementById("routedBtnCount");
+      const returnedBtnCountEl = document.getElementById("returnedBtnCount");
+      const tatProcessBtn = document.getElementById("tatProcessBtn");
+      const tatOverlay = document.getElementById("tatOverlay");
+      const tatCloseBtn = document.getElementById("tatCloseBtn");
+      const tatRows = document.getElementById("tatRows");
+      const tatSummary = document.getElementById("tatSummary");
+      const tatAlertBadge = document.getElementById("tatAlertBadge");
+      let tatRecords = [];
+      const formatMDY = (date) => {
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        return `${mm}-${dd}-${date.getFullYear()}`;
+      };
+
+
+      const safeDate = (val) => {
+        const d = val ? new Date(val) : null;
+        return d && !isNaN(d.getTime()) ? d : null;
+      };
+
+      const parseServerDateTime = (value) => {
+        if (!value) return null;
+        if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+        const raw = String(value).trim();
+        if (!raw) return null;
+        const mysqlMatch = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})$/);
+        if (mysqlMatch) {
+          const d = new Date(`${mysqlMatch[1]}T${mysqlMatch[2]}`);
+          return Number.isNaN(d.getTime()) ? null : d;
+        }
+        const d = new Date(raw);
+        return Number.isNaN(d.getTime()) ? null : d;
+      };
+
+      const getRegType = (regNo) => {
+        if (!regNo) return "";
+        if (/\(Renewal\)/i.test(regNo)) return "Renewal";
+        if (/\(New\)/i.test(regNo)) return "New";
+        return "New";
+      };
+
+      const toStatusLabel = (approvalStatus) => {
+        if (approvalStatus === "Approved") return "Registered";
+        if (approvalStatus === "Returned") return "Returned";
+        return "Routed";
+      };
+
+      const toStatusClass = (statusLabel) => {
+        if (statusLabel === "Registered") return "registered";
+        if (statusLabel === "Returned") return "returned";
+        return "routed";
+      };
+
+      const formatDuration = (item) => {
+        const start = parseServerDateTime(item.tatStart) || safeDate(item.dateRegistered);
+        if (!start) return "N/A";
+
+        const isDone = item.approvalStatus === "Approved" || item.releasedStatus === "Released";
+        const end = isDone ? (parseServerDateTime(item.releasedAt) || new Date()) : new Date();
+        const diffMs = Math.max(0, end.getTime() - start.getTime());
+        const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const days = Math.floor(totalHours / 24);
+        const hours = totalHours % 24;
+
+        if (days > 0) return `${days}d ${hours}h`;
+        return `${hours}h`;
+      };
+
+      const renderRecentActivity = (items) => {
+        if (!recentRowsEl) return;
+        recentRowsEl.innerHTML = "";
+        if (!items.length) {
+          recentRowsEl.innerHTML = `<tr><td colspan="4" style="text-align:center;">No recent activity found.</td></tr>`;
+          return;
+        }
+
+        items.forEach((item) => {
+          const statusLabel = toStatusLabel(item.approvalStatus);
+          const statusClass = toStatusClass(statusLabel);
+          const dateVal = safeDate(item.dateRegistered);
+          const dateText = dateVal ? formatMDY(dateVal) : "N/A";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="app-link">${item.regNo || "N/A"}</td>
+            <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+            <td>${dateText}</td>
+            <td>${formatDuration(item)}</td>
+          `;
+          recentRowsEl.appendChild(tr);
+        });
+      };
+
+      const formatDateTime = (value) => {
+        if (!value) return "-";
+        const d = parseServerDateTime(value);
+        if (!d) return String(value);
+        return d.toLocaleString();
+      };
+
+      const resolveTatStatus = (record) => {
+        if (String(record.releasedStatus || "").toLowerCase() === "released") return "Completed";
+        const existing = String(record.tatStatus || "").trim();
+        if (existing) return existing;
+        const expiry = parseServerDateTime(record.tatExpiry);
+        if (!expiry) return "On Track";
+        const now = new Date();
+        if (now > expiry) return "Breached";
+        const msLeft = expiry.getTime() - now.getTime();
+        if (msLeft <= 24 * 60 * 60 * 1000) return "Warning";
+        return "On Track";
+      };
+
+      const pillClassForStatus = (status) => {
+        const s = String(status || "").toLowerCase();
+        if (s === "breached") return "breached";
+        if (s === "warning") return "warning";
+        if (s === "completed") return "completed";
+        return "on-track";
+      };
+
+      const renderTatRows = (records) => {
+        tatRows.innerHTML = "";
+        if (!records.length) {
+          tatRows.innerHTML = '<tr><td colspan="6">No active (not yet expired) TAT records found.</td></tr>';
+          tatSummary.textContent = "Active: 0 | Warning: 0 | Breached: 0";
+          return;
+        }
+
+        const warningCount = records.filter((r) => resolveTatStatus(r) === "Warning").length;
+        const breachedCount = records.filter((r) => resolveTatStatus(r) === "Breached").length;
+        tatSummary.textContent = `Active: ${records.length} | Warning: ${warningCount} | Breached: ${breachedCount}`;
+
+        records.forEach((r) => {
+          const status = resolveTatStatus(r);
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${r.regNo || ""}</td>
+            <td>${r.ownerName || ""}</td>
+            <td>${r.evaluatedByName || "-"}</td>
+            <td><span class="tat-pill ${pillClassForStatus(status)}">${status}</span></td>
+            <td>${formatDateTime(r.tatExpiry)}</td>
+            <td>${r.processRemarks || "-"}</td>
+          `;
+          tatRows.appendChild(tr);
+        });
+      };
+
+      const updateTatBadge = (records) => {
+        const activeCount = Array.isArray(records) ? records.length : 0;
+        tatAlertBadge.textContent = String(activeCount);
+        tatAlertBadge.classList.toggle("has-alert", activeCount > 0);
+      };
+
+      const openTatPopup = () => {
+        renderTatRows(tatRecords);
+        tatOverlay.style.display = "block";
+        tatOverlay.setAttribute("aria-hidden", "false");
+      };
+
+      const closeTatPopup = () => {
+        tatOverlay.style.display = "none";
+        tatOverlay.setAttribute("aria-hidden", "true");
+      };
+
+      const renderStatusDistribution = (items) => {
+        const totals = { Routed: 0, Registered: 0, Returned: 0 };
+        items.forEach((item) => {
+          const label = toStatusLabel(item.approvalStatus);
+          totals[label] += 1;
+        });
+
+        if (routedCountEl) routedCountEl.textContent = totals.Routed;
+        if (registeredCountEl) registeredCountEl.textContent = totals.Registered;
+        if (returnedCountEl) returnedCountEl.textContent = totals.Returned;
+        if (routedBtnCountEl) routedBtnCountEl.textContent = totals.Routed;
+        if (registeredBtnCountEl) registeredBtnCountEl.textContent = totals.Registered;
+        if (returnedBtnCountEl) returnedBtnCountEl.textContent = totals.Returned;
+
+        const sum = totals.Routed + totals.Registered + totals.Returned;
+        const routedPct = sum ? (totals.Routed / sum) * 100 : 0;
+        const regPct = sum ? (totals.Registered / sum) * 100 : 0;
+        const retPct = sum ? (totals.Returned / sum) * 100 : 0;
+
+        if (donutEl) {
+          donutEl.style.background = `conic-gradient(
+            #f39c12 0% ${routedPct}%,
+            #27ae60 ${routedPct}% ${routedPct + regPct}%,
+            #e74c3c ${routedPct + regPct}% 100%
+          )`;
+        }
+      };
+
+      const renderWeeklyTrend = (items) => {
+        if (!weeklyBarsEl || !weeklyLabelsEl) return;
+        weeklyBarsEl.innerHTML = "";
+        weeklyLabelsEl.innerHTML = "";
+
+        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const counts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
+
+        const today = new Date();
+        const weekAgo = new Date();
+        weekAgo.setDate(today.getDate() - 6);
+        weekAgo.setHours(0, 0, 0, 0);
+
+        items.forEach((item) => {
+          const dateVal = safeDate(item.dateRegistered);
+          if (!dateVal) return;
+          if (dateVal < weekAgo) return;
+          const dayIndex = dateVal.getDay(); 
+          const label = days[(dayIndex + 6) % 7]; 
+          counts[label] += 1;
+        });
+
+        const max = Math.max(...Object.values(counts), 1);
+        days.forEach((label) => {
+          const value = counts[label];
+          const pct = Math.round((value / max) * 100);
+          const bar = document.createElement("div");
+          bar.className = "bar";
+          bar.style.height = `${pct}%`;
+          bar.setAttribute("data-value", String(value));
+          weeklyBarsEl.appendChild(bar);
+
+          const span = document.createElement("span");
+          span.textContent = label;
+          weeklyLabelsEl.appendChild(span);
+        });
+      };
+
+      const loadDashboard = async () => {
+        try {
+          const res = await fetch("/registrations/evaluation");
+          const data = await res.json();
+          const items = Array.isArray(data) ? data : [];
+
+          const totalCount = items.length;
+          const newCount = items.filter((item) => getRegType(item.regNo) === "New").length;
+          const renewalCount = items.filter((item) => getRegType(item.regNo) === "Renewal").length;
+
+          if (totalEl) totalEl.textContent = totalCount;
+          if (newEl) newEl.textContent = newCount;
+          if (renewalEl) renewalEl.textContent = renewalCount;
+
+          const pendingPrint = items.filter((item) => String(item.forPrintStatus || "").toLowerCase() === "pending");
+          const recent = [...pendingPrint].sort((a, b) => {
+            const aDate = safeDate(a.dateRegistered);
+            const bDate = safeDate(b.dateRegistered);
+            return (bDate ? bDate.getTime() : 0) - (aDate ? aDate.getTime() : 0);
+          }).slice(0, 5);
+
+          renderRecentActivity(recent);
+          renderStatusDistribution(items);
+          renderWeeklyTrend(items);
+          const now = Date.now();
+          tatRecords = items.filter((r) => {
+            if (!r.tatExpiry) return false;
+            if (String(r.approvalStatus || "").toLowerCase() !== "pending") return false;
+            const expiry = parseServerDateTime(r.tatExpiry);
+            return expiry && now <= expiry.getTime();
+          });
+          updateTatBadge(tatRecords);
+        } catch (err) {
+          console.error("Dashboard load error:", err);
+          if (totalEl) totalEl.textContent = "0";
+          if (newEl) newEl.textContent = "0";
+          if (renewalEl) renewalEl.textContent = "0";
+          renderRecentActivity([]);
+          renderStatusDistribution([]);
+          renderWeeklyTrend([]);
+          tatRecords = [];
+          updateTatBadge([]);
+        }
+      };
+
+      tatProcessBtn.addEventListener("click", openTatPopup);
+      tatCloseBtn.addEventListener("click", closeTatPopup);
+      tatOverlay.addEventListener("click", (e) => {
+        if (e.target === tatOverlay) closeTatPopup();
+      });
+
+      loadDashboard();
+
+      setInterval(loadDashboard, 60000);
+    });
+
+  </script>
+
+</body>
+</html>

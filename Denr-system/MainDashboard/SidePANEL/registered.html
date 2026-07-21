@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <title>E-CHAINSAW RMS - Registered</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/evalution.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/liquid-glass.css">
+    <style>
+        .progress-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 16px;
+        }
+
+        .progress-modal {
+            width: 100%;
+            max-width: 360px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .progress-title {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0f766e, #14b8a6);
+            transition: width 220ms linear;
+        }
+
+        .progress-text {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .pdf-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            padding: 16px;
+        }
+
+        .pdf-modal {
+            width: min(980px, 100%);
+            height: min(92vh, 760px);
+            background: #fff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .pdf-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .pdf-modal-title {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .pdf-modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pdf-modal-btn {
+            border: none;
+            border-radius: 6px;
+            padding: 7px 12px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .pdf-modal-btn.print {
+            background: #0f766e;
+            color: #fff;
+        }
+
+        .pdf-modal-btn.close {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        #pdfViewerFrame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: #f3f4f6;
+        }
+
+        body.processing-lock {
+            overflow: hidden;
+        }
+
+        body.processing-lock > * {
+            pointer-events: none;
+        }
+
+        body.processing-lock #progressOverlay {
+            pointer-events: auto;
+        }
+    </style>
+     <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="registered-page">
+    <nav class="sidebar">
+        <div class="sidebar">
+          <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>ADMIN</span></h2>
+        
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/AdminDashboard.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Forprinting.html">For Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/approval.html">Approval</a></li>
+      <li><a href="/MainDashboard/SidePANEL/registered.html" class="active">Registered</a></li>
+      <li><a href="/Auth/adduser.html">Add Employee</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+        </div>
+    </nav>
+
+    <main class="main">
+
+
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1>Master Registry</h1>
+            </div>
+
+            <div class="filters">
+                <label for="dateFilter">Registration Period:</label>
+                <select id="dateFilter" class="filter-select">
+                    <option value="all">All Registered</option>
+                    <option value="week">Past 1 Week</option>
+                    <option value="month">Past 1 Month</option>
+                    <option value="year">Past 1 Year</option>
+                </select>
+                <input id="searchInput" class="filter-search" type="text" placeholder="Search reg no, owner, serial">
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Reg No.</th>
+                            <th>Owner Name</th>
+                            <th>Brand/Model</th>
+                            <th>Serial No.</th>
+                            <th>Expiry Date</th>
+                            <th>Release Status</th>
+                            <th>PDF</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registeredRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="progressOverlay" class="progress-overlay" aria-hidden="true">
+        <div class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="progressTitle">
+            <h3 id="progressTitle" class="progress-title">Processing...</h3>
+            <div class="progress-track">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText" class="progress-text">Please wait.</p>
+        </div>
+    </div>
+
+    <div id="pdfModalOverlay" class="pdf-modal-overlay" aria-hidden="true">
+        <div class="pdf-modal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
+            <div class="pdf-modal-header">
+                <h3 id="pdfModalTitle" class="pdf-modal-title">Print Preview</h3>
+                <div class="pdf-modal-actions">
+                    <button type="button" id="pdfPrintBtn" class="pdf-modal-btn print">Print</button>
+                    <button type="button" id="pdfFullscreenBtn" class="pdf-modal-btn print">Full Screen</button>
+                    <button type="button" id="pdfCloseBtn" class="pdf-modal-btn close">Close</button>
+                </div>
+            </div>
+            <iframe id="pdfViewerFrame" title="PDF Preview"></iframe>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const rowsEl = document.getElementById("registeredRows");
+        const dateFilter = document.getElementById("dateFilter");
+        const searchInput = document.getElementById("searchInput");
+        const progressOverlay = document.getElementById("progressOverlay");
+        const progressFill = document.getElementById("progressFill");
+        const progressTitle = document.getElementById("progressTitle");
+        const progressText = document.getElementById("progressText");
+        const pdfModalOverlay = document.getElementById("pdfModalOverlay");
+        const pdfViewerFrame = document.getElementById("pdfViewerFrame");
+        const pdfPrintBtn = document.getElementById("pdfPrintBtn");
+        const pdfFullscreenBtn = document.getElementById("pdfFullscreenBtn");
+        const pdfCloseBtn = document.getElementById("pdfCloseBtn");
+        let allItems = [];
+        let activeRange = "all";
+        let progressTimer = null;
+        let progressValue = 0;
+        let isProcessing = false;
+        let currentPdfUrl = null;
+        let searchQuery = "";
+
+        const toLocalYmd = (date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, "0");
+            const d = String(date.getDate()).padStart(2, "0");
+            return `${y}-${m}-${d}`;
+        };
+
+        const formatDisplayDate = (value) => {
+            if (!value) return "N/A";
+            if (typeof value === "string") {
+                const trimmed = value.trim();
+                if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+                const parsed = new Date(trimmed);
+                if (!Number.isNaN(parsed.getTime())) return toLocalYmd(parsed);
+                return value;
+            }
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return value;
+            return toLocalYmd(date);
+        };
+
+        const formatDateForPayload = (value) => {
+            if (!value) return "";
+            if (typeof value === "string") {
+                const trimmed = value.trim();
+                if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+                const parsed = new Date(trimmed);
+                if (!Number.isNaN(parsed.getTime())) return toLocalYmd(parsed);
+                return String(value);
+            }
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return String(value);
+            return toLocalYmd(date);
+        };
+
+        const normalizeImagePath = (value) => {
+            if (!value) return "";
+            let p = String(value).trim().replace(/\\/g, "/");
+            if (!p) return "";
+
+            if (/^https?:\/\//i.test(p)) return encodeURI(p);
+            if (/^\/uploads\//i.test(p)) return encodeURI(p);
+            if (/^uploads\//i.test(p)) return encodeURI(`/${p}`);
+
+            
+            const idx = p.toLowerCase().indexOf("/uploads/");
+            if (idx >= 0) return encodeURI(p.slice(idx));
+
+            return encodeURI(p.startsWith("/") ? p : `/${p}`);
+        };
+
+        const renderRows = (items) => {
+            if (!rowsEl) return;
+            rowsEl.innerHTML = "";
+
+            
+            const registeredItems = items.filter(item => item.approvalStatus === "Approved");
+
+            const q = searchQuery.trim().toLowerCase();
+            const filteredItems = q
+                ? registeredItems.filter((item) =>
+                    String(item.regNo || "").toLowerCase().includes(q) ||
+                    String(item.ownerName || "").toLowerCase().includes(q) ||
+                    String(item.serialNo || "").toLowerCase().includes(q)
+                )
+                : registeredItems;
+
+            if (!filteredItems.length) {
+                rowsEl.innerHTML = `<tr><td colspan="7" style="text-align:center;">No registered chainsaws found.</td></tr>`;
+                return;
+            }
+
+            filteredItems.forEach((item) => {
+                const tr = document.createElement("tr");
+                
+                
+                const releaseText = item.releasedStatus === "Released" ? "Released" : "In Office";
+                const releaseClass = item.releasedStatus === "Released" ? "status-approved" : "status-pending";
+                const brandModel = `${item.brand || ""} ${item.model || ""}`.trim() || "N/A";
+
+                tr.innerHTML = `
+                    <td><strong>${item.regNo || "N/A"}</strong></td>
+                    <td>${item.ownerName || ""}</td>
+                    <td>${brandModel}</td>
+                    <td>${item.serialNo || ""}</td>
+                    <td>${formatDisplayDate(item.expiryDate)}</td>
+                    <td><span class="badge ${releaseClass}">${releaseText}</span></td>
+                    <td>
+                        <button type="button" class="btn btn-view pdf-btn" data-id="${item.id}">Preview PDF</button>
+                    </td>
+                `;
+                rowsEl.appendChild(tr);
+            });
+
+            rowsEl.querySelectorAll(".pdf-btn").forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    if (isProcessing) return;
+                    const id = btn.getAttribute("data-id");
+                    const record = filteredItems.find((i) => String(i.id) === String(id));
+                    if (!record) return;
+                    await previewPdf(record, btn);
+                });
+            });
+        };
+
+        const filterByRange = (items) => {
+            if (activeRange === "all") return items;
+            const now = new Date();
+            let cutoff = new Date(now);
+
+            if (activeRange === "week") cutoff.setDate(now.getDate() - 7);
+            if (activeRange === "month") cutoff.setMonth(now.getMonth() - 1);
+            if (activeRange === "year") cutoff.setFullYear(now.getFullYear() - 1);
+
+            return items.filter((item) => {
+                const dateVal = item.dateRegistered;
+                if (!dateVal) return false;
+                return new Date(dateVal) >= cutoff;
+            });
+        };
+
+        if (dateFilter) {
+            dateFilter.addEventListener("change", () => {
+                activeRange = dateFilter.value || "all";
+                renderRows(filterByRange(allItems));
+            });
+        }
+        if (searchInput) {
+            searchInput.addEventListener("input", () => {
+                searchQuery = searchInput.value || "";
+                renderRows(filterByRange(allItems));
+            });
+        }
+
+        const loadData = async () => {
+            try {
+                const res = await fetch("/registrations/evaluation");
+                const data = await res.json();
+                allItems = Array.isArray(data) ? data : [];
+                renderRows(filterByRange(allItems));
+            } catch (err) {
+                console.error("Registry load error:", err);
+                renderRows([]);
+            }
+        };
+
+        const startProgress = (title) => {
+            if (isProcessing) return false;
+            isProcessing = true;
+            document.body.classList.add("processing-lock");
+            document.body.setAttribute("aria-busy", "true");
+            progressTitle.textContent = title || "Processing...";
+            progressText.textContent = "Please wait while the file is being prepared.";
+            progressOverlay.style.display = "flex";
+            progressOverlay.setAttribute("aria-hidden", "false");
+            progressValue = 8;
+            progressFill.style.width = `${progressValue}%`;
+
+            if (progressTimer) clearInterval(progressTimer);
+            progressTimer = setInterval(() => {
+                if (progressValue < 92) {
+                    progressValue += Math.random() * 6;
+                    if (progressValue > 92) progressValue = 92;
+                    progressFill.style.width = `${progressValue}%`;
+                }
+            }, 220);
+            return true;
+        };
+
+        const finishProgress = (success, message) => {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+            progressFill.style.width = "100%";
+            progressText.textContent = message || (success ? "Completed." : "Failed.");
+
+            setTimeout(() => {
+                progressOverlay.style.display = "none";
+                progressOverlay.setAttribute("aria-hidden", "true");
+                progressFill.style.width = "0%";
+                isProcessing = false;
+                document.body.classList.remove("processing-lock");
+                document.body.removeAttribute("aria-busy");
+            }, 500);
+        };
+
+        const openPdfModal = (pdfUrl) => {
+            if (currentPdfUrl) {
+                try { URL.revokeObjectURL(currentPdfUrl); } catch (_) {}
+            }
+            currentPdfUrl = pdfUrl;
+            pdfViewerFrame.src = pdfUrl;
+            pdfModalOverlay.style.display = "flex";
+            pdfModalOverlay.setAttribute("aria-hidden", "false");
+        };
+
+        const closePdfModal = () => {
+            pdfModalOverlay.style.display = "none";
+            pdfModalOverlay.setAttribute("aria-hidden", "true");
+            pdfViewerFrame.src = "";
+            if (currentPdfUrl) {
+                try { URL.revokeObjectURL(currentPdfUrl); } catch (_) {}
+                currentPdfUrl = null;
+            }
+        };
+
+        const blockWhileProcessing = (e) => {
+            if (!isProcessing) return;
+            const insideProgress = e.target && e.target.closest && e.target.closest("#progressOverlay");
+            if (!insideProgress) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+        };
+
+        const previewPdf = async (record, btn) => {
+            const originalText = btn ? btn.textContent : "";
+            if (!startProgress("Generating PDF preview...")) return;
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "Generating...";
+            }
+
+            const formData = new FormData();
+            const data = {
+                regNo: record.regNo || "",
+                ownerName: record.ownerName || "",
+                address: record.address || "",
+                brand: record.brand || "",
+                model: record.model || "",
+                datePurchased: formatDateForPayload(record.datePurchased),
+                serialNo: record.serialNo || "",
+                horsepower: record.horsepower || "",
+                guidebar: record.guidebar || "",
+                others: record.others || "",
+                dateRegistered: formatDateForPayload(record.dateRegistered),
+                expiryDate: formatDateForPayload(record.expiryDate),
+                purpose: record.purpose || "",
+                remarks: record.remarks || "",
+                receiptNo: record.receiptNo || "",
+                orNumber: record.orNumber || "",
+                performanceEval: record.performanceEval || "",
+                recommendation: record.recommendation || "",
+                dealer: record.dealer || "",
+                evaluatedByName: record.evaluatedByName || "",
+                evaluatedByPosition: record.evaluatedByPosition || "",
+                approvedByName: record.approvedByName || "",
+                approvedByPosition: record.approvedByPosition || "",
+                recommendingApprovalName: record.recommendingApprovalName || "",
+                recommendingApprovalPosition: record.recommendingApprovalPosition || "",
+                payment: record.payment || "",
+                amount: record.amount != null ? String(record.amount) : "",
+                releasedAt: record.releasedAt || ""
+            };
+
+            Object.keys(data).forEach((key) => formData.append(key, data[key]));
+
+            const images = Array.isArray(record.images) ? record.images.slice(0, 10) : [];
+            for (let i = 0; i < images.length; i++) {
+                try {
+                    const imagePath = normalizeImagePath(images[i]);
+                    if (!imagePath) continue;
+                    const res = await fetch(imagePath);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const blob = await res.blob();
+                    formData.append(`img${i + 1}`, blob, `image${i + 1}.jpg`);
+                } catch (err) {
+                    console.error("Image fetch failed:", images[i], err);
+                }
+            }
+
+            try {
+                const res = await fetch("/generate-pdf", { method: "POST", body: formData });
+                if (!res.ok) throw new Error("PDF generation failed");
+
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                openPdfModal(url);
+                finishProgress(true, "PDF generated successfully.");
+            } catch (err) {
+                console.error("PDF preview error:", err);
+                finishProgress(false, "Failed to generate PDF preview.");
+                alert("Failed to preview PDF.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            }
+        };
+
+        document.addEventListener("click", blockWhileProcessing, true);
+        document.addEventListener("contextmenu", blockWhileProcessing, true);
+        document.addEventListener("submit", blockWhileProcessing, true);
+        document.addEventListener("keydown", (e) => {
+            if (!isProcessing) return;
+            if (e.key !== "F5") {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+
+        if (pdfFullscreenBtn) {
+            pdfFullscreenBtn.addEventListener("click", () => {
+                if (!pdfViewerFrame) return;
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (pdfViewerFrame.requestFullscreen) {
+                    pdfViewerFrame.requestFullscreen().catch(() => {});
+                }
+            });
+        }
+
+        if (pdfPrintBtn) {
+            pdfPrintBtn.addEventListener("click", () => {
+                if (!pdfViewerFrame || !pdfViewerFrame.src) {
+                    alert("No PDF is ready to print yet.");
+                    return;
+                }
+                try {
+                    const frameWindow = pdfViewerFrame.contentWindow;
+                    if (!frameWindow) throw new Error("Print window unavailable");
+                    frameWindow.focus();
+                    frameWindow.print();
+                } catch (err) {
+                    console.error("PDF print error:", err);
+                    alert("Unable to open the print dialog for this PDF.");
+                }
+            });
+        }
+
+        pdfCloseBtn.addEventListener("click", closePdfModal);
+        pdfModalOverlay.addEventListener("click", (e) => {
+            if (e.target === pdfModalOverlay) closePdfModal();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && pdfModalOverlay.style.display === "flex") {
+                closePdfModal();
+            }
+        });
+
+        loadData();
+    </script>
+</body>
+</html>

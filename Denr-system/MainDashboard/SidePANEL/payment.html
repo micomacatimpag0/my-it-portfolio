@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <title>E-CHAINSAW RMS Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/evalution.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+
+     <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>RPS</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/ApprovalDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/evaluation.html">Evaluation</a></li>
+      <li><a href="/MainDashboard/SidePANEL/payment.html" class="active">Payment</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Evaluation/progress.html">Progress</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+    </div>
+
+    <main class="main">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1>Routed Documents</h1>
+                <div class="filters" style="display:flex; gap:10px; align-items:center; margin: 10px 0 20px 0;">
+                    <label for="statusFilter" style="font-weight:600; font-size: 14px; color: #f8fafc;">Status:</label>
+                    <select id="statusFilter" class="filter-select" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0; outline: none;">
+                        <option value="Approved" selected>Approved</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Returned">Returned</option>
+                    </select>
+                    <label for="dateFilter" style="font-weight:600; font-size: 14px; color: #f8fafc;">Filter:</label>
+                    <select id="dateFilter" class="filter-select" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0; outline: none;">
+                        <option value="all">All</option>
+                        <option value="week">Past 1 Week</option>
+                        <option value="month">Past 1 Month</option>
+                        <option value="year">Past 1 Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Registration No.</th>
+                            <th>Name of Owner</th>
+                            <th>Serial No.</th>
+                            <th>Remaining Time</th>
+                            <th>Status</th>
+                            <th>PDF</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evaluationRows">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="pdfOverlay" class="popup-overlay" aria-hidden="true">
+        <div class="popup-dialog" style="max-width: 1200px; width: 95%;">
+            <div style="display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap;">
+                <div style="flex: 0 0 320px; max-width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+                    <h3 class="popup-title" style="margin-bottom: 6px;">Update Registration</h3>
+                    <p class="popup-message">Set payment details, then confirm.</p>
+                    <div style="display: grid; gap: 10px; margin-top: 12px;">
+                        <label style="font-weight: 600; color: #334155;">
+                            Amount
+                            <input id="paymentAmountInput" type="number" min="0" step="0.01" placeholder="Enter amount" style="width: 100%; margin-top: 6px; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <small id="paymentStatusHint" style="display:block; margin-top: 6px; color:#475569;">Payment status: Pending Payment</small>
+                        </label>
+                    </div>
+                    <div class="popup-actions" style="margin-top: 14px;">
+                        <button type="button" id="confirmStatusBtn" class="popup-btn">Update</button>
+                        <button type="button" id="pdfCloseBtn" class="popup-btn" style="background-color: #64748b; margin-left: 10px;">Close</button>
+                    </div>
+                </div>
+                <div style="flex: 1 1 520px; min-width: 300px;">
+                    <h3 class="popup-title" style="display:flex; align-items:center; justify-content:space-between;">
+                        <span>PDF Preview</span>
+                        <button type="button" id="pdfFullscreenBtn" class="popup-btn" style="padding:6px 10px;">Full Screen</button>
+                    </h3>
+                    <iframe id="pdfFrame" style="width:100%; height:70vh; border:1px solid #eee; border-radius:8px;" referrerpolicy="no-referrer"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progressOverlay" class="progress-overlay" aria-hidden="true">
+        <div class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="progressTitle">
+            <h3 id="progressTitle" class="progress-title">Processing...</h3>
+            <div class="progress-track">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText" class="progress-text">Please wait.</p>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const rowsEl = document.getElementById("evaluationRows");
+        const statusFilter = document.getElementById("statusFilter");
+        const dateFilter = document.getElementById("dateFilter");
+        const paymentAmountInput = document.getElementById("paymentAmountInput");
+        const paymentStatusHint = document.getElementById("paymentStatusHint");
+        const confirmStatusBtn = document.getElementById("confirmStatusBtn");
+        const pdfOverlay = document.getElementById("pdfOverlay");
+        const pdfFrame = document.getElementById("pdfFrame");
+        const pdfCloseBtn = document.getElementById("pdfCloseBtn");
+        const pdfFullscreenBtn = document.getElementById("pdfFullscreenBtn");
+        const progressOverlay = document.getElementById("progressOverlay");
+        const progressFill = document.getElementById("progressFill");
+        const progressTitle = document.getElementById("progressTitle");
+        const progressText = document.getElementById("progressText");
+        let activeRecord = null;
+        let allItems = [];
+        let activeStatus = "Approved";
+        let activeRange = "all";
+        let pdfUrl = null;
+        let progressTimer = null;
+        let progressValue = 0;
+        let isProcessing = false;
+
+        const parseServerDateTime = (value) => {
+            if (!value) return null;
+            if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+
+            const raw = String(value).trim();
+            if (!raw) return null;
+
+            // MySQL DATETIME (no timezone) is stored from UTC-formatted strings in current flow.
+            // Parse it as UTC to avoid showing a shortened remaining time in local timezone.
+            const mysqlMatch = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})$/);
+            if (mysqlMatch) {
+                const asUtc = `${mysqlMatch[1]}T${mysqlMatch[2]}Z`;
+                const d = new Date(asUtc);
+                return Number.isNaN(d.getTime()) ? null : d;
+            }
+
+            const d = new Date(raw);
+            return Number.isNaN(d.getTime()) ? null : d;
+        };
+
+        const formatRemaining = (tatExpiry) => {
+            if (!tatExpiry) return "No TAT";
+
+            const end = parseServerDateTime(tatExpiry);
+            if (!end) return "No TAT";
+
+            const now = new Date();
+            const diffMs = end - now;
+
+            if (diffMs <= 0) return "Overdue";
+
+            const totalMins = Math.floor(diffMs / 60000);
+            const days = Math.floor(totalMins / (60 * 24));
+            const hours = Math.floor((totalMins % (60 * 24)) / 60);
+            const mins = totalMins % 60;
+
+            const parts = [];   
+            if (days) parts.push(`${days} day${days === 1 ? "" : "s"}`);
+            if (hours) parts.push(`${hours} hr${hours === 1 ? "" : "s"}`);
+            if (!days && !hours) parts.push(`${mins} min${mins === 1 ? "" : "s"}`);
+
+            return parts.join(" ");
+        };
+
+        const isPaymentQueueItem = (item) => {
+            const approvalStatus = String(item && item.approvalStatus || "").trim().toLowerCase();
+            const payment = String(item && item.payment || "").trim().toLowerCase();
+            return approvalStatus === "approved" && (payment === "payment" || payment === "pending payment");
+        };
+
+        const renderRows = (items) => {
+            if (!rowsEl) return;
+            rowsEl.innerHTML = "";
+
+            if (!items.length) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="6">No records found.</td>`;
+                rowsEl.appendChild(tr);
+                return;
+            }
+
+            items.forEach((item) => {
+                const tr = document.createElement("tr");
+                const remaining = formatRemaining(item.tatExpiry);
+                const status = item.approvalStatus || "Pending";
+
+                tr.innerHTML = `
+                    <td>${item.regNo || ""}</td>
+                    <td>${item.ownerName || ""}</td>
+                    <td>${item.serialNo || ""}</td>
+                    <td>${remaining}</td>
+                    <td class="status-cell">${status}</td>
+                    <td>
+                        <button type="button" class="btn btn-view pdf-btn" data-id="${item.id}">Preview PDF</button>
+                    </td>
+                `;
+                rowsEl.appendChild(tr);
+            });
+
+            rowsEl.querySelectorAll(".pdf-btn").forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    const id = btn.getAttribute("data-id");
+                    const record = items.find((i) => String(i.id) === String(id));
+                    if (!record) return;
+                    activeRecord = record;
+                    openCombinedModal(record);
+                });
+            });
+        };
+
+        const filterByRange = (items) => {
+            if (activeRange === "all") return items;
+
+            const now = new Date();
+            let cutoff = new Date(now);
+
+            if (activeRange === "week") cutoff.setDate(now.getDate() - 7);
+            if (activeRange === "month") cutoff.setMonth(now.getMonth() - 1);
+            if (activeRange === "year") cutoff.setFullYear(now.getFullYear() - 1);
+
+            return items.filter((item) => {
+                const dateVal = item.dateRegistered || item.tatStart || item.datePurchased;
+                if (!dateVal) return false;
+                const d = new Date(dateVal);
+                if (Number.isNaN(d.getTime())) return false;
+                return d >= cutoff;
+            });
+        };
+
+        const filterByStatus = (items) => {
+            if (!activeStatus) return items;
+            return items.filter((item) => (item.approvalStatus || "Pending") === activeStatus);
+        };
+
+        const applyFilters = () => {
+            const paymentItems = allItems.filter(isPaymentQueueItem);
+            const byStatus = filterByStatus(paymentItems);
+            const byRange = filterByRange(byStatus);
+            renderRows(byRange);
+        };
+
+        if (statusFilter) {
+            statusFilter.addEventListener("change", () => {
+                activeStatus = statusFilter.value || "Pending";
+                applyFilters();
+            });
+        }
+
+        if (dateFilter) {
+            dateFilter.addEventListener("change", () => {
+                activeRange = dateFilter.value || "all";
+                applyFilters();
+            });
+        }
+
+        const openCombinedModal = (record) => {
+            if (!record) return;
+            if (paymentAmountInput) {
+                paymentAmountInput.value = record.amount != null ? String(record.amount) : "";
+            }
+            syncPaymentStatusFromAmount();
+            previewPdf(record);
+        };
+
+        const startProgress = (title) => {
+            if (isProcessing) return false;
+            isProcessing = true;
+            document.body.classList.add("processing-lock");
+            document.body.setAttribute("aria-busy", "true");
+            progressTitle.textContent = title || "Processing...";
+            progressText.textContent = "Please wait while the request is being processed.";
+            progressOverlay.style.display = "flex";
+            progressOverlay.setAttribute("aria-hidden", "false");
+            progressValue = 8;
+            progressFill.style.width = `${progressValue}%`;
+
+            if (progressTimer) clearInterval(progressTimer);
+            progressTimer = setInterval(() => {
+                if (progressValue < 92) {
+                    progressValue += Math.random() * 6;
+                    if (progressValue > 92) progressValue = 92;
+                    progressFill.style.width = `${progressValue}%`;
+                }
+            }, 220);
+            return true;
+        };
+
+        const finishProgress = (success, message) => {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+            progressFill.style.width = "100%";
+            progressText.textContent = message || (success ? "Completed." : "Failed.");
+
+            setTimeout(() => {
+                progressOverlay.style.display = "none";
+                progressOverlay.setAttribute("aria-hidden", "true");
+                progressFill.style.width = "0%";
+                isProcessing = false;
+                document.body.classList.remove("processing-lock");
+                document.body.removeAttribute("aria-busy");
+            }, 500);
+        };
+
+        const blockWhileProcessing = (e) => {
+            if (!isProcessing) return;
+            const insideProgress = e.target && e.target.closest && e.target.closest("#progressOverlay");
+            if (!insideProgress) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+        };
+
+        const formatDateForPayload = (value) => {
+            if (!value) return "";
+            if (typeof value === "string") {
+                const trimmed = value.trim();
+                const ymdMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2})/);
+                if (ymdMatch) return ymdMatch[1];
+            }
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return String(value);
+            return date.toISOString().slice(0, 10);
+        };
+
+        const getPaymentStatusFromAmount = (value) => {
+            const trimmed = String(value ?? "").trim();
+            if (trimmed === "") return "Pending Payment";
+            const parsed = Number(trimmed);
+            return Number.isFinite(parsed) && parsed > 0 ? "Paid" : "Pending Payment";
+        };
+
+        const syncPaymentStatusFromAmount = () => {
+            const payment = getPaymentStatusFromAmount(paymentAmountInput ? paymentAmountInput.value : "");
+            if (paymentStatusHint) {
+                paymentStatusHint.textContent = `Payment status: ${payment}`;
+            }
+            return payment;
+        };
+
+        if (paymentAmountInput) {
+            paymentAmountInput.addEventListener("input", syncPaymentStatusFromAmount);
+        }
+
+        if (confirmStatusBtn) {
+            confirmStatusBtn.addEventListener("click", async () => {
+                if (!activeRecord) return;
+
+                const approvalStatus = activeRecord.approvalStatus || "Pending";
+                const payment = syncPaymentStatusFromAmount();
+                const rawAmount = paymentAmountInput ? paymentAmountInput.value : "";
+                const amount = rawAmount === "" ? null : Number(rawAmount);
+
+                if (payment === "Paid") {
+                    if (!Number.isFinite(amount) || amount <= 0) {
+                        alert("Please enter a valid amount greater than 0 for Paid payment.");
+                        return;
+                    }
+                }
+
+                const ok = confirm(`Confirm update?\nPayment: ${payment}${payment === "Paid" ? `\nAmount: ${amount}` : ""}`);
+                if (!ok) return;
+                if (!startProgress("Updating registration...")) return;
+
+                try {
+                    const payload = {
+                        approvalStatus,
+                        payment,
+                        amount: payment === "Paid" ? amount : null,
+                        tatStart: activeRecord.tatStart || null,
+                        tatExpiry: activeRecord.tatExpiry || null
+                    };
+                    const res = await fetch(`/registrations/${activeRecord.id}/approval`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || "Update failed");
+
+                    activeRecord.approvalStatus = approvalStatus;
+                    activeRecord.payment = payment;
+                    activeRecord.amount = payment === "Paid" ? amount : null;
+                    closePdfModal();
+                    finishProgress(true, "Registration updated successfully.");
+                    loadData();
+                } catch (err) {
+                    console.error("Status update error:", err);
+                    finishProgress(false, "Failed to update status/payment.");
+                    alert("Failed to update status/payment.");
+                }
+            });
+        }
+
+        const openPdfModal = (url) => {
+            if (!pdfOverlay || !pdfFrame) return;
+            if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+            pdfUrl = url;
+            pdfFrame.src = `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`;
+            pdfOverlay.classList.add("show");
+            pdfOverlay.setAttribute("aria-hidden", "false");
+        };
+
+        const closePdfModal = () => {
+            if (!pdfOverlay || !pdfFrame) return;
+            pdfOverlay.classList.remove("show");
+            pdfOverlay.setAttribute("aria-hidden", "true");
+            pdfFrame.src = "";
+            if (pdfUrl) {
+                URL.revokeObjectURL(pdfUrl);
+                pdfUrl = null;
+            }
+        };
+
+        if (pdfOverlay) {
+            pdfOverlay.addEventListener("click", (e) => {
+                if (e.target === pdfOverlay) closePdfModal();
+            });
+        }
+        if (pdfCloseBtn) pdfCloseBtn.addEventListener("click", closePdfModal);
+        if (pdfFullscreenBtn) {
+            pdfFullscreenBtn.addEventListener("click", () => {
+                if (!pdfFrame) return;
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (pdfFrame.requestFullscreen) {
+                    pdfFrame.requestFullscreen().catch(() => {});
+                }
+            });
+        }
+
+        const previewPdf = async (record) => {
+            if (!startProgress("Generating PDF preview...")) return;
+            const formData = new FormData();
+            const data = {
+                regNo: record.regNo || "",
+                ownerName: record.ownerName || "",
+                address: record.address || "",
+                brand: record.brand || "",
+                model: record.model || "",
+                datePurchased: formatDateForPayload(record.datePurchased),
+                serialNo: record.serialNo || "",
+                horsepower: record.horsepower || "",
+                guidebar: record.guidebar || "",
+                others: record.others || "",
+                dateRegistered: formatDateForPayload(record.dateRegistered),
+                expiryDate: formatDateForPayload(record.expiryDate),
+                purpose: record.purpose || "",
+                remarks: record.remarks || "",
+                receiptNo: record.receiptNo || "",
+                orNumber: record.orNumber || "",
+                performanceEval: record.performanceEval || "",
+                recommendation: record.recommendation || "",
+                dealer: record.dealer || "",
+                evaluatedByName: record.evaluatedByName || "",
+                evaluatedByPosition: record.evaluatedByPosition || "",
+                approvedByName: record.approvedByName || "",
+                approvedByPosition: record.approvedByPosition || "",
+                recommendingApprovalName: record.recommendingApprovalName || "",
+                recommendingApprovalPosition: record.recommendingApprovalPosition || ""
+            };
+
+            Object.keys(data).forEach((key) => formData.append(key, data[key]));
+
+            const images = Array.isArray(record.images) ? record.images.slice(0, 10) : [];
+            for (let i = 0; i < images.length; i++) {
+                try {
+                    const res = await fetch(images[i]);
+                    const blob = await res.blob();
+                    formData.append(`img${i + 1}`, blob, `image${i + 1}.jpg`);
+                } catch (err) {
+                    console.error("Image fetch failed:", err);
+                }
+            }
+
+            try {
+                const res = await fetch("/generate-pdf", { method: "POST", body: formData });
+                if (!res.ok) throw new Error("PDF generation failed");
+
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                openPdfModal(url);
+                finishProgress(true, "PDF generated successfully.");
+            } catch (err) {
+                console.error("PDF preview error:", err);
+                finishProgress(false, "Failed to preview PDF.");
+                alert("Failed to preview PDF.");
+            }
+        };
+
+        const loadData = async () => {
+            try {
+                const res = await fetch("/registrations/evaluation");
+                const data = await res.json();
+                allItems = Array.isArray(data) ? data : [];
+                applyFilters();
+            } catch (err) {
+                console.error("Failed to load evaluation data:", err);
+                renderRows([]);
+            }
+        };
+
+        document.addEventListener("click", blockWhileProcessing, true);
+        document.addEventListener("contextmenu", blockWhileProcessing, true);
+        document.addEventListener("submit", blockWhileProcessing, true);
+        document.addEventListener("keydown", (e) => {
+            const isPrintShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p";
+            const isPdfOpen = pdfOverlay && pdfOverlay.classList.contains("show");
+
+            if (isPdfOpen && isPrintShortcut) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+
+            if (!isProcessing) return;
+            if (e.key !== "F5") {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+
+        loadData();
+    </script>
+</body>
+</html>

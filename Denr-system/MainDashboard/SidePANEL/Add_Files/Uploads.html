@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+<title>E-CHAINSAW RMS - Attachments</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/upload.css">
+
+<style>
+  #imagePreviewContainer img {
+    max-width: 150px;
+    max-height: 100px;
+    margin: 5px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+  }
+</style>
+ <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+              <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+          </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html" class="active">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+</div>
+
+<div class="main">
+
+  <div class="content-area">
+    <div class="form-card" id="upload-section">
+      <div class="upload-header-row">
+        <h1 class="form-header">ATTACHMENTS OF SERIAL NUMBER,<br>CHAINSAW, AND VALID ID</h1>
+        <button type="button" id="usePhoneBtn" class="upload-header-phone-btn">Use Phone Camera</button>
+      </div>
+<div class="upload-container" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div class="upload-box" data-slot="1" onclick="document.getElementById('img1').click()">
+        <label>1. Serial Number</label>
+        <input type="file" id="img1" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview1" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="2" onclick="document.getElementById('img2').click()">
+        <label>2. Chainsaw</label>
+        <input type="file" id="img2" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview2" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="3" onclick="document.getElementById('img3').click()">
+        <label>3. Chainsaw With Client</label>
+        <input type="file" id="img3" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview3" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="4" onclick="document.getElementById('img4').click()">
+        <label>4. Serial Number Copy</label>
+        <input type="file" id="img4" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview4" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="5" onclick="document.getElementById('img5').click()">
+        <label>5. Technical Description</label>
+        <input type="file" id="img5" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview5" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="6" onclick="document.getElementById('img6').click()">
+        <label>6. Brgy Certification</label>
+        <input type="file" id="img6" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview6" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="7" onclick="document.getElementById('img7').click()">
+        <label>7. Affidavit of Legal Use</label>
+        <input type="file" id="img7" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview7" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="8" onclick="document.getElementById('img8').click()">
+        <label>8. Receipt of Chainsaw</label>
+        <input type="file" id="img8" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview8" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="9" onclick="document.getElementById('img9').click()">
+        <label>9. Permit to Sell</label>
+        <input type="file" id="img9" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview9" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="10" onclick="document.getElementById('img10').click()">
+        <label>10. Receipt of Payment</label>
+        <input type="file" id="img10" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview10" class="preview-box"></div>
+    </div>
+</div>
+      <div class="form-footer-group upload-footer">
+        <button type="button" class="back-btn" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='Inspections.html'; }">Back</button>
+        <div class="footer-actions">
+          <button type="button" class="print-btn">Print</button>
+          <button type="button" id="exportWord" class="submit-final-btn">Export to Word</button>
+          <button type="button" id="addFilesBtn" class="submit-add-files">Add Files</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="qrModalOverlay" class="qr-modal-overlay" aria-hidden="true">
+  <div class="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+    <h3 id="qrModalTitle">Scan With Phone</h3>
+    <p id="qrModalSubtext">Open your phone camera and scan this code.</p>
+    <div id="qrCanvasWrap"></div>
+    <div class="qr-modal-actions">
+      <button type="button" id="qrCloseBtn" class="qr-close-btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<!-- LIBRARIES -->
+<script src="https://unpkg.com/pizzip@3.2.0/dist/pizzip.js"></script>
+<script src="https://unpkg.com/pizzip@3.2.0/dist/pizzip-utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.43.0/build/docxtemplater.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docxtemplater-image-module-free-browserify@1.0.1/build/image-module-browser.js"></script>
+
+
+
+
+<script>
+
+function setupPreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const previewContainer = document.getElementById(previewId);
+
+    if (!input || !previewContainer) return; 
+
+    input.addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        previewContainer.innerHTML = "";
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = document.createElement("img");
+            img.src = event.target.result;
+            img.style.width = "150px";
+            img.style.height = "100px";
+            img.style.objectFit = "cover";
+            img.style.border = "2px solid #ccc";
+            img.style.borderRadius = "4px";
+            img.style.marginTop = "10px";
+            
+            const fileName = document.createElement("p");
+            fileName.textContent = file.name;
+            fileName.style.fontSize = "10px";
+            fileName.style.color = "#333";
+
+            previewContainer.appendChild(img);
+            previewContainer.appendChild(fileName);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+
+for(let i = 1; i <= 10; i++) {
+    setupPreview(`img${i}`, `preview${i}`);
+}
+
+document.getElementById("exportWord").addEventListener("click", async () => {
+    const createData = JSON.parse(localStorage.getItem("chainsawFormData")) || {};
+    const inspectionData = JSON.parse(localStorage.getItem("inspectionFormData")) || {};
+
+    const loggedInUser = JSON.parse(localStorage.getItem("user")) || {};
+
+    const approvedByUser = {
+        fullname: createData.approvedBy || "Unknown",
+        position: createData.position || "Position not set"
+    };
+
+    const data = {
+        regNo: createData.regNo || "",
+        ownerName: createData.ownerName || "",
+        address: createData.address || "",
+        brand: createData.brand || "",
+        model: createData.model || "",
+        datePurchased: createData.dateAcquired || "",
+        serialNo: createData.serialNo || "",
+        horsepower: createData.horsepower || "",
+        guidebar: createData.guidebar || "",
+        others: createData.others || "",
+        dateRegistered: createData.issuedOn || "",
+        expiryDate: createData.expiryDate || "",
+        
+        purpose: inspectionData["purpose"] || createData.useCase || "",
+        remarks: inspectionData["remarks"] || createData.others || "",
+        receiptNo: inspectionData["receiptNo"] || "",
+        orNumber: inspectionData["orNumber"] || "",
+        performanceEval: inspectionData["performanceEval"] || "",
+        recommendation: inspectionData["recommendation"] || "",
+        dealer: inspectionData["dealer"] || "N/A",
+        templateKey: "addfiles",
+            
+        evaluatedByName: (inspectionData["evaluatedByName"] || loggedInUser.fullname || "Unknown User").toUpperCase(),
+        evaluatedByPosition: inspectionData["evaluatedByPosition"] || loggedInUser.position || "EMS I/ Chief, Utilization Unit",
+        approvedByName: (approvedByUser.fullname || "Unknown").toUpperCase(),
+        approvedByPosition: approvedByUser.position || "CENR Officer",
+        recommendingApprovalName: String(inspectionData["approvedByName"] || "").trim().toUpperCase(),
+        recommendingApprovalPosition: String(inspectionData["approvedByPosition"] || "").trim()
+
+    };
+
+    const formData = new FormData();
+
+    
+    const imageFields = ['img1', 'img2', 'img3', 'img4', 'img5', 'img6', 'img7', 'img8', 'img9', 'img10'];
+    
+    imageFields.forEach(id => {
+        const fileInput = document.getElementById(id);
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            formData.append(id, fileInput.files[0]);
+        }
+    });
+
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+
+    try {
+        const res = await fetch("/generate-docx", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) throw new Error("DOCX generation failed");
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Chainsaw_Reg_${data.ownerName.replace(/\s+/g, '_')}.docx`;
+        link.click();
+        
+        alert("âœ… DOCX GENERATED SUCCESSFULLY!");
+    } catch (err) {
+        alert("âŒ Error: " + err.message);
+    }
+});
+
+document.querySelector(".print-btn").addEventListener("click", async () => {
+    const btn = document.querySelector(".print-btn");
+    const originalText = btn.textContent;
+    
+    
+    btn.textContent = "Generating PDF...";
+    btn.disabled = true;
+
+    const createData = JSON.parse(localStorage.getItem("chainsawFormData")) || {};
+    const inspectionData = JSON.parse(localStorage.getItem("inspectionFormData")) || {};
+    const formData = new FormData();
+
+    
+    const data = {
+        ...createData,
+        ...inspectionData,
+        templateKey: "addfiles",
+        recommendingApprovalName: String(inspectionData["approvedByName"] || "").trim().toUpperCase(),
+        recommendingApprovalPosition: String(inspectionData["approvedByPosition"] || "").trim()
+    };
+    for (const key in data) { formData.append(key, data[key]); }
+
+    
+    for (let i = 1; i <= 10; i++) {
+        const fileInput = document.getElementById(`img${i}`);
+        if (fileInput && fileInput.files[0]) {
+            formData.append(`img${i}`, fileInput.files[0]);
+        }
+    }
+
+    try {
+        const res = await fetch("/generate-pdf", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) throw new Error("Could not generate PDF");
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        
+        window.open(url, '_blank');
+        
+        
+        btn.textContent = originalText;
+        btn.disabled = false;
+
+    } catch (err) {
+        alert("âŒ Error generating printable PDF: " + err.message);
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+});
+
+const socket = io();
+const sessionId = "sess-" + Date.now();
+let selectedSlot = 1;
+const qrModalOverlay = document.getElementById("qrModalOverlay");
+const qrCanvasWrap = document.getElementById("qrCanvasWrap");
+const qrModalSubtext = document.getElementById("qrModalSubtext");
+const qrCloseBtn = document.getElementById("qrCloseBtn");
+
+socket.emit("join-session", sessionId);
+
+
+const uploadBoxes = document.querySelectorAll(".upload-box");
+uploadBoxes.forEach((box, index) => {
+    const slotNumber = Number(box.dataset.slot || (index + 1));
+
+    box.addEventListener("click", () => {
+        selectedSlot = slotNumber;
+    });
+
+    box.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        selectedSlot = slotNumber;
+        openPhoneForSlot(slotNumber);
+    });
+});
+
+document.getElementById("usePhoneBtn").addEventListener("click", () => {
+    openPhoneForSlot(selectedSlot);
+});
+
+qrCloseBtn.addEventListener("click", () => {
+    qrModalOverlay.style.display = "none";
+    qrModalOverlay.setAttribute("aria-hidden", "true");
+});
+
+qrModalOverlay.addEventListener("click", (e) => {
+    if (e.target === qrModalOverlay) {
+        qrModalOverlay.style.display = "none";
+        qrModalOverlay.setAttribute("aria-hidden", "true");
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && qrModalOverlay.style.display === "flex") {
+        qrModalOverlay.style.display = "none";
+        qrModalOverlay.setAttribute("aria-hidden", "true");
+    }
+});
+
+function getMobileOrigin() {
+    const protocol = window.location.protocol || "http:";
+    const port = window.location.port ? `:${window.location.port}` : "";
+    const host = window.location.hostname;
+
+    if (host && host !== "localhost" && host !== "127.0.0.1") {
+        return `${protocol}//${host}${port}`;
+    }
+
+    const savedLanHost = localStorage.getItem("mobileLanHost");
+    if (savedLanHost) {
+        return `${protocol}//${savedLanHost}${port}`;
+    }
+
+    const enteredLanHost = window.prompt(
+        "Enter your PC LAN IP (example: 192.168.1.61) so phone opens faster:",
+        "192.168.1.61"
+    );
+    if (enteredLanHost) {
+        const cleanHost = enteredLanHost.trim();
+        if (cleanHost) {
+            localStorage.setItem("mobileLanHost", cleanHost);
+            return `${protocol}//${cleanHost}${port}`;
+        }
+    }
+
+    return `${protocol}//localhost${port}`;
+}
+
+function openPhoneForSlot(slotNumber) {
+    const origin = getMobileOrigin();
+    const url = `${origin}/mobile1.html?session=${sessionId}&slot=${slotNumber}`;
+
+    QRCode.toCanvas(url, (err, canvas) => {
+        if (err) return;
+        qrCanvasWrap.innerHTML = "";
+        qrCanvasWrap.appendChild(canvas);
+        qrModalSubtext.textContent = `Slot ${slotNumber}: Scan this code on your phone.`;
+        qrModalOverlay.style.display = "flex";
+        qrModalOverlay.setAttribute("aria-hidden", "false");
+    });
+}
+
+
+socket.on("image-uploaded", (data) => {
+    const slot = Number(data.slot);
+    if (!Number.isFinite(slot) || slot < 1 || slot > 10) return;
+
+    
+    fetch(data.imageUrl)
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to fetch uploaded image");
+            return res.blob();
+        })
+        .then(blob => {
+            const extension = (blob.type && blob.type.split("/")[1]) ? blob.type.split("/")[1] : "jpg";
+            const file = new File([blob], `mobile-slot-${slot}.${extension}`, { type: blob.type || "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            const input = document.getElementById(`img${slot}`);
+            if (!input) return;
+
+            input.files = dataTransfer.files;
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+        })
+        .catch(() => {
+            const preview = document.getElementById(`preview${slot}`);
+            if (!preview) return;
+            preview.innerHTML = "";
+            const img = document.createElement("img");
+            img.src = data.imageUrl;
+            img.style.width = "150px";
+            img.style.height = "100px";
+            img.style.objectFit = "cover";
+            preview.appendChild(img);
+        });
+});
+
+</script>
+<script src="/scripts/addfilesupload.js"></script>
+
+
+</body>
+</html>

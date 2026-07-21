@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS - Evaluation & Renewal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+   <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html" class="active">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="content-area">
+      <div class="form-card">
+        <h1 class="form-header">REGISTRATION OF POWER CHAINSAW<br>INSPECTION AND EVALUATION REPORT</h1>
+        
+        <form class="registration-form">
+          <div class="input-grid">
+            <div class="form-row">
+                <div class="input-label">Name of Applicant:</div>
+                <input type="text" name="ownerName">
+            </div>
+            <div class="form-row">
+                <div class="input-label">Address:</div>
+                <input type="text" name="address">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Serial number:</div>
+              <input type="text" name="serialNo">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Dealer (name of company/firm):</div>
+              <input type="text" name="dealer">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Date of Purchased:</div>
+              <input type="date" name="datePurchased">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Sales Receipt Number:</div>
+              <input type="text" name="receiptNo">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Purpose of the Chainsaw:</div>
+              <input type="text" name="purpose">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Assessment remarks:</div>
+              <input type="text" name="remarks">
+            </div>
+          </div>
+
+          <h2 class="renewal-header">TO BE FILLED UP IN CASE OF RENEWAL</h2>
+          <div class="input-grid">
+            <div class="form-row"><div class="input-label">Date registered:</div><input type="date" name="dateRegistered" readonly></div>
+            <div class="form-row"><div class="input-label">Expiry Date:</div><input type="date" name="expiryDate" readonly></div>
+            <div class="form-row"><div class="input-label">O.R. number:</div><input type="text" name="orNumber"></div>
+            <div class="form-row"><div class="input-label">Performance Evaluation:</div><input type="text" name="performanceEval"></div>
+            <div class="form-row"><div class="input-label">Date of Purchased:</div><input type="date" name="datePurchasedRenewal"></div>
+            <div class="form-row"><div class="input-label">Recommendation:</div><input type="text" name="recommendation"></div>
+          </div>
+
+          <div class="approval-section">
+            <div class="sig-box">
+              <p>Evaluated by:</p>
+              <h4 id="evaluatedByName">[Name]</h4>
+              <span id="evaluatedByPosition">[Position]</span>
+            </div>
+            <div class="sig-box">
+              <p>Recommending Approval:</p>
+              <select id="approvedByName" name="approvedByName" style="width: 100%; text-align: center; margin-bottom: 6px;">
+                <option value="">Select RPS approver</option>
+              </select>
+              <input type="hidden" id="recommendingApprovalId" name="recommendingApproval_id">
+              <input type="hidden" id="approvedByPositionInput" name="approvedByPosition">
+              <span id="approvedByPosition">[Position]</span>
+            </div>
+          </div>
+
+          <div class="form-footer-group">
+            <button type="button" class="back-btn" id="backBtn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const createData = JSON.parse(localStorage.getItem("chainsawFormData")) || {};
+    const previousInspectionData = JSON.parse(localStorage.getItem("inspectionFormData")) || {};
+
+    const map = {
+        ownerName: createData.ownerName,
+        address: createData.address,
+        serialNo: createData.serialNo,
+
+        // SAME INPUT RULES
+        datePurchased: createData.dateAcquired,
+        datePurchasedRenewal: createData.dateAcquired,
+        purpose: createData.useCase,
+
+        receiptNo: "",
+        remarks: createData.others,
+
+        dateRegistered: createData.issuedOn,
+        expiryDate: createData.expiryDate
+    };
+
+    Object.keys(map).forEach(name => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (input && map[name] !== undefined) {
+            input.value = map[name];
+        }
+    });
+
+  const loggedInUser = JSON.parse(localStorage.getItem('user')) || {};
+  const token = localStorage.getItem('token') || "";
+
+  const decodeTokenUserId = () => {
+    if (!token || token.split(".").length < 2) return null;
+    try {
+      const payload = token.split(".")[1];
+      const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+      const json = JSON.parse(atob(normalized));
+      const n = Number(json && json.id);
+      return Number.isFinite(n) && n > 0 ? n : null;
+    } catch (_) {
+      return null;
+    }
+  };
+  const tokenUserId = decodeTokenUserId();
+
+  const getLoggedInName = (u) =>
+    String(u.fullname || u.full_name || u.fullName || "").trim();
+  const getLoggedInPosition = (u) => String(u.position || u.role || "").trim();
+  const getLoggedInId = (u) => {
+    const candidate = u.id ?? u.userId ?? u.user_id;
+    const n = Number(candidate);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
+
+  const evaluatedName = getLoggedInName(loggedInUser);
+  const evaluatedPosition = getLoggedInPosition(loggedInUser);
+  const evaluatedId = getLoggedInId(loggedInUser) ?? tokenUserId;
+  const approvedByNameSelect = document.getElementById("approvedByName");
+  const recommendingApprovalIdInput = document.getElementById("recommendingApprovalId");
+  const approvedByPositionSpan = document.getElementById("approvedByPosition");
+  const approvedByPositionInput = document.getElementById("approvedByPositionInput");
+  let rpsApprovers = [];
+
+  document.getElementById('evaluatedByName').textContent = (evaluatedName || 'Unknown User').toUpperCase();
+
+  document.getElementById('evaluatedByPosition').textContent = evaluatedPosition || 'Position not set';
+
+  const syncSelectedApprover = () => {
+    if (!approvedByNameSelect) return;
+    const selectedName = String(approvedByNameSelect.value || "").trim().toLowerCase();
+    if (!selectedName) {
+      if (recommendingApprovalIdInput) recommendingApprovalIdInput.value = "";
+      if (approvedByPositionSpan) approvedByPositionSpan.textContent = "[Position]";
+      if (approvedByPositionInput) approvedByPositionInput.value = "";
+      return;
+    }
+
+    const matched = rpsApprovers.find((u) => u.name.toLowerCase() === selectedName);
+    if (!matched) {
+      if (recommendingApprovalIdInput) recommendingApprovalIdInput.value = "";
+      if (approvedByPositionSpan) approvedByPositionSpan.textContent = "[Position]";
+      if (approvedByPositionInput) approvedByPositionInput.value = "";
+      return;
+    }
+
+    if (recommendingApprovalIdInput) recommendingApprovalIdInput.value = String(matched.id);
+    if (approvedByPositionSpan) approvedByPositionSpan.textContent = matched.position || "[Position]";
+    if (approvedByPositionInput) approvedByPositionInput.value = matched.position || "";
+  };
+
+  const loadRpsApprovers = async () => {
+    if (!approvedByNameSelect) return;
+    try {
+      const res = await fetch("/users/list");
+      if (!res.ok) return;
+      const users = await res.json();
+      if (!Array.isArray(users)) return;
+
+      rpsApprovers = users
+        .map((u) => ({
+          id: Number(u.id),
+          name: String(u.full_name || u.fullname || "").trim(),
+          position: String(u.position || "").trim()
+        }))
+        .filter((u) => Number.isFinite(u.id) && u.name.length > 0)
+        .filter((u) => u.position.toLowerCase().includes("rps"))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      const preferredName = String(previousInspectionData.approvedByName || createData.approvedBy || "").trim();
+      approvedByNameSelect.innerHTML =
+        `<option value="">Select RPS approver</option>` +
+        rpsApprovers
+          .map((u) => `<option value="${u.name.replace(/"/g, "&quot;")}">${u.name}</option>`)
+          .join("");
+
+      if (preferredName) approvedByNameSelect.value = preferredName;
+      syncSelectedApprover();
+    } catch (err) {
+      console.error("Failed to load RPS approvers:", err);
+    }
+  };
+
+  if (approvedByNameSelect) {
+    approvedByNameSelect.addEventListener("change", syncSelectedApprover);
+    approvedByNameSelect.addEventListener("blur", syncSelectedApprover);
+  }
+
+  loadRpsApprovers();
+
+
+    
+    document.querySelector(".next-btn").addEventListener("click", () => {
+        const inspectionData = {};
+        document.querySelectorAll(".registration-form input, .registration-form select").forEach(input => {
+            if (input.name) inspectionData[input.name] = input.value;
+        });
+        inspectionData.evaluatedByName = String(evaluatedName || "").trim().toUpperCase();
+        inspectionData.evaluatedByPosition = String(evaluatedPosition || "").trim();
+        inspectionData.evaluatedBy_id = evaluatedId;
+        // Map inspection approver fields to recommending approval fields for downstream templates.
+        inspectionData.recommendingApprovalName = String(inspectionData.approvedByName || "").trim().toUpperCase();
+        inspectionData.recommendingApprovalPosition = String(inspectionData.approvedByPosition || "").trim();
+
+        localStorage.setItem("inspectionFormData", JSON.stringify(inspectionData));
+        window.location.href = "upload.html";
+    });
+
+    const backBtn = document.getElementById("backBtn");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            
+            window.location.href = "create.html";
+        });
+    }
+});
+</script>
+
+
+
+</body>
+</html>

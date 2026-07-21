@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <title>DENR User Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/adduser.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/liquid-glass.css">
+     <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body >
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+            </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>ADMIN</span></h2>
+        
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/AdminDashboard.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Forprinting.html">For Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/approval.html">Approval</a></li>
+      <li><a href="/MainDashboard/SidePANEL/registered.html">Registered</a></li>
+      <li><a href="/Auth/adduser.html" class="active">Add Employee</a></li>
+      <li><a href="/Auth/login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+    </div>
+
+    <main class="main">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1>DENR USER MANAGEMENT</h1>
+            </div>
+
+            <div class="container dashboard">
+                <div class="forms">
+                    <section class="user-section">
+                        <form id="userForm">
+                            <input type="hidden" id="userId">
+
+                            <label>Full Name</label>
+                            <input type="text" id="fullname" required>
+
+                            <label>Username</label>
+                            <input type="text" id="username" required>
+
+                            <label>Password</label>
+                            <div class="password-field">
+                                <input type="password" id="password" placeholder="Enter your Password" required>
+                                <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password" aria-pressed="false">
+                                    <img src="/assets/icons/eye.svg" alt="" class="password-toggle-icon">
+                                </button>
+                            </div>
+
+                            <label>Position</label>
+                            <input type="text" id="position" required>
+
+                            <label>Section</label>
+                            <select id="section" required>
+                                <option value="">Select section</option>
+                                <option value="utilization">Utilization</option>
+                                <option value="admin">Admin</option>
+                                <option value="rps">RPS</option>
+                                <option value="records">Records</option>
+                            </select>
+
+                            <label>Status</label>
+                            <select id="status" required>
+                                <option value="Active">Active</option>
+                                <option value="On Leave">On Leave</option>
+                                <option value="Suspended">Suspended</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+
+                            <button type="submit">Submit</button>
+                        </form>
+                        <p id="result" class="message"></p>
+                    </section>
+                </div>
+
+                <div class="users-table">
+                    <div class="table-container">
+                        <table id="usersTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Position</th>
+                                    <th>Section</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="/scripts/scriptadduser.js"></script>
+</body>
+</html>

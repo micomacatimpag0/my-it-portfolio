@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>E-CHAINSAW RMS</h2>
+    <ul>
+      <li><a href="#" class="active">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/evaluation.html">Evaluation</a></li>
+      <li><a href="/MainDashboard/SidePANEL/approval.html">Approval</a></li>
+      <li><a href="/MainDashboard/SidePANEL/registered.html">Registered</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="topnav">
+      <input type="text" placeholder="Search">
+      <span class="icon">&#128276;</span>
+      <span class="icon">&#128100;</span>
+    </div>
+
+    <div class="cards">
+      <div class="card total">
+        <h3>Total Applications</h3>
+        <p>126</p>
+      </div>
+      <div class="card new">
+        <h3>New Registrations</h3>
+        <p>86</p>
+      </div>
+      <div class="card renewal">
+        <h3>Renewal</h3>
+        <p>40</p>
+      </div>
+    </div>
+
+    <div class="status-buttons">
+      <button class="status-btn registered">Registered Chainsaws</button>
+      <button class="status-btn routed">Routed Applications</button>
+      <button class="status-btn returned">Returned Applications</button>
+    </div>
+
+    <div class="table-container">
+      <div class="recent-activity">
+        <h3>Recent Activity</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Application No.</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="app-link">DENR-000001</td>
+              <td><span class="status-pill routed">Routed</span></td>
+              <td>01-21-2026</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td class="app-link">DENR-000002</td>
+              <td><span class="status-pill registered">Registered</span></td>
+              <td>01-21-2026</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td class="app-link">DENR-000003</td>
+              <td><span class="status-pill registered">Registered</span></td>
+              <td>01-21-2026</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td class="app-link">DENR-000004</td>
+              <td><span class="status-pill returned">Returned</span></td>
+              <td>01-21-2026</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td class="app-link">DENR-000005</td>
+              <td><span class="status-pill returned">Returned</span></td>
+              <td>01-21-2026</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="chart-box">
+        <h3>Status Distribution</h3>
+        <div class="chart-content">
+          <div class="donut-chart"></div>
+          <ul class="chart-legend">
+            <li class="legend-item"><span class="legend-dot routed"></span> Routed</li>
+            <li class="legend-item"><span class="legend-dot registered"></span> Registered</li>
+            <li class="legend-item"><span class="legend-dot returned"></span> Returned</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="weekly-trend">
+      <h3>Weekly Application Trend</h3>
+      <div class="bar-container">
+        <div class="bar" style="height: 60%;" data-value="8"></div>
+        <div class="bar" style="height: 45%;" data-value="6"></div>
+        <div class="bar" style="height: 68%;" data-value="9"></div>
+        <div class="bar returned" style="height: 60%;" data-value="8"></div>
+        <div class="bar returned" style="height: 10%;" data-value="1"></div>
+      </div>
+      <div class="bar-labels">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

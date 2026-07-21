@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <title>DENR Registration Removal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+     <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+    
+</head>
+<body class="removefiles-page">
+   <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+       <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html" class="active">Remove Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+      
+    </ul>
+  </div>
+
+    <main class="main">
+
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1>DELETE REGISTRATION RECORDS</h1>
+            </div>
+
+            <div class="container dashboard">
+                <div class="users-table" style="flex: 1; width: 100%;">
+                    <h3>All Registrations</h3>
+                    <div class="table-container">
+                        <table id="registrationsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Reg No.</th>
+                                    <th>Owner</th>
+                                    <th>Serial No.</th>
+                                    <th>Release Status</th>
+                                    <th>Images</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="7">Loading registrations...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="/scripts/scriptremovefiles.js"></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+   <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html" class="active">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="content-area">
+  <div class="form-card">
+    <h1 class="form-header">CERTIFICATE OF REGISTRATION</h1>
+
+    <form class="registration-form">
+      <div class="registration-top">
+        <div class="registration-type">
+          <label class="section-label">Registration Type:</label>
+          <div class="radio-options">
+            <label class="radio-item">
+              <input type="radio" name="regType" value="New" id="regNew" checked>
+              <span class="custom-radio"></span> New Registration
+            </label>
+
+            <label class="radio-item">
+              <input type="radio" name="regType" value="Renewal" id="regRenew">
+              <span class="custom-radio"></span> Renewal
+            </label>
+          </div>
+        </div>
+
+        <div class="search-group">
+          <div class="input-label">Search Registration:</div>
+          <input type="text" id="regSearch" placeholder="Enter RegNo or Owner Name">
+          <div id="searchResults" class="search-results"></div>
+        </div>
+      </div>
+
+      <div class="input-grid">
+        <div class="form-row">
+          <div class="input-label">Registration No.</div>
+          <input type="text" name="regNo" id="regNo" placeholder="Generating..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Name of Owner:</div>
+          <input type="text" name="ownerName" placeholder="Enter owner name" required>
+        </div>
+
+        <div class="form-row address-row">
+          <div class="input-label">Address:</div>
+          <div class="address-container" style="display: flex; gap: 10px; width: 100%;">
+            <input type="text" name="address" id="addressInput" placeholder="Click 'Pick Location'..." class="large-input" style="flex-grow: 1;" readonly required>
+            <button type="button" id="locationBtn" class="pick-btn" style="white-space: nowrap;">Pick Location</button>
+          </div>
+        </div>
+
+        <div id="locationPicker" class="location-picker-grid" style="display: none; grid-column: 1 / -1; margin-bottom: 15px;">
+          <select id="province">
+            <option value="">Select Province</option>
+            <option value="Eastern Samar">Eastern Samar</option>
+          </select>
+          <select id="cityMuni" required>
+            <option value="">Select City/Municipality</option>
+          </select>
+          <select id="barangay" required>
+            <option value="">Select Barangay</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Use of chainsaw:</div>
+          <input type="text" name="useCase" placeholder="Enter use case" required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Brand:</div>
+          <input type="text" name="brand" placeholder="Enter brand" required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Model:</div>
+          <input type="text" name="model" placeholder="Enter model" required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Date of Acquisition:</div>
+          <div class="date-wrapper">
+            <input type="date" name="dateAcquired" id="dateAcquired" class="large-input" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Serial number:</div>
+          <input type="text" name="serialNo" placeholder="Enter serial number" required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Horsepower:</div>
+
+          <div class="unit-input" style="flex-grow: 1; max-width: 300px;">
+            <input
+              type="number"
+              name="horsepower"
+              id="horsepower"
+              placeholder="0.00"
+              min="0"
+              step="0.1"
+              required
+            >
+            <span class="unit">hp</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Max. Length Guidebar:</div>
+
+          <div class="unit-input" style="flex-grow: 1; max-width: 300px;">
+            <input
+              type="number"
+              name="guidebar"
+              id="guidebar"
+              placeholder="0"
+              min="0"
+              step="0.1"
+              required
+            >
+            <span class="unit">in</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Others:</div>
+          <input type="text" name="others" placeholder="Enter other details" required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Issued on:</div>
+          <input type="date" name="issuedOn" id="issuedOn" class="large-input" readonly required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Expiry Date:</div>
+          <input type="date" name="expiryDate" id="expiryDate" class="large-input" readonly required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Approved by:</div>
+          <select name="approvedBy" id="approvedBySelect" required>
+            <option value="">Select Admin approver</option>
+          </select>
+          <input type="hidden" name="approvedBy_id" id="approvedById">
+        </div>
+
+        <div class="form-row">
+          <div class="input-label">Position:</div>
+          <input type="text" name="position" id="approvedByPosition" value="" readonly required>
+        </div>
+      </div> <div class="form-footer">
+        <button type="button" class="next-btn">Next</button>
+      </div>
+    </form>
+  </div>
+</div>
+  </div>
+
+  <div id="popupOverlay" class="popup-overlay" aria-hidden="true">
+    <div class="popup-dialog" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+      <h3 id="popupTitle" class="popup-title">Notice</h3>
+      <p id="popupMessage" class="popup-message">Message</p>
+      <div class="popup-actions">
+        <button type="button" id="popupNextBtn" class="popup-btn" style="display:none;">Go Next (Change Owner)</button>
+        <button type="button" id="popupOkBtn" class="popup-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/scripts/renewal.js"></script>
+  <script src="/scripts/create.js"></script>
+</body>
+</html>

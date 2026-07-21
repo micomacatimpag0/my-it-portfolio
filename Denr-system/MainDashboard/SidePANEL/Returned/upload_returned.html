@@ -1,0 +1,812 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+<title>E-CHAINSAW RMS - Attachments</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/upload.css">
+ <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM</h2>
+    </div>
+  <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html" class="active">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/index.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+  </ul>
+</div>
+
+<div class="main">
+  <div class="content-area">
+    <div class="form-card" id="upload-section">
+      <div class="upload-header-row">
+        <h1 class="form-header">ATTACHMENTS</h1>
+        <button type="button" id="usePhoneBtn" class="upload-header-phone-btn">Use Phone Camera</button>
+      </div>
+<div class="upload-container" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div class="upload-box" data-slot="1" onclick="document.getElementById('img1').click()">
+        <label>1. Serial Number</label>
+        <input type="file" id="img1" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview1" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="2" onclick="document.getElementById('img2').click()">
+        <label>2. Chainsaw</label>
+        <input type="file" id="img2" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview2" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="3" onclick="document.getElementById('img3').click()">
+        <label>3. Chainsaw With Client</label>
+        <input type="file" id="img3" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview3" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="4" onclick="document.getElementById('img4').click()">
+        <label>4. Serial Number Copy</label>
+        <input type="file" id="img4" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview4" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" id="deedOfSaleBox" data-slot="5" onclick="document.getElementById('img5').click()" style="display:none;">
+        <label id="labelImg5">5. Deed of Sale</label>
+        <input type="file" id="img5" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview5" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="6" onclick="document.getElementById('img6').click()">
+        <label id="labelImg6">5. Brgy Certification</label>
+        <input type="file" id="img6" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview6" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="7" onclick="document.getElementById('img7').click()">
+        <label id="labelImg7">6. Affidavit of Legal Use</label>
+        <input type="file" id="img7" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview7" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="8" onclick="document.getElementById('img8').click()">
+        <label id="labelImg8">7. Receipt of Chainsaw</label>
+        <input type="file" id="img8" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview8" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="9" onclick="document.getElementById('img9').click()">
+        <label id="labelImg9">8. Permit to Sell</label>
+        <input type="file" id="img9" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview9" class="preview-box"></div>
+    </div>
+
+    <div class="upload-box" data-slot="10" onclick="document.getElementById('img10').click()">
+        <label id="labelImg10">9. Receipt of Payment</label>
+        <input type="file" id="img10" class="img-input" accept="image/*" style="display:none;">
+        <div id="preview10" class="preview-box"></div>
+    </div>
+</div>
+      <div class="form-footer-group upload-footer">
+        <button type="button" class="back-btn" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='inspection_renew.html'; }">Back</button>
+        <div class="footer-actions">
+          <button type="button" class="print-btn">Preview PDF</button>
+          <button type="button" id="Sendforapprove" class="submit-approval-btn">Send for Approval</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="qrModalOverlay" class="qr-modal-overlay" aria-hidden="true">
+  <div class="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+    <h3 id="qrModalTitle">Scan With Phone</h3>
+    <p id="qrModalSubtext">Open your phone camera and scan this code.</p>
+    <div id="qrCanvasWrap"></div>
+    <div class="qr-modal-actions">
+      <button type="button" id="qrCloseBtn" class="qr-close-btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="progressOverlay" class="progress-overlay" aria-hidden="true">
+  <div class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="progressTitle">
+    <h3 id="progressTitle" class="progress-title">Processing...</h3>
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+    <p id="progressText" class="progress-text">Please wait.</p>
+  </div>
+</div>
+
+<div id="pdfModalOverlay" class="pdf-modal-overlay" aria-hidden="true">
+  <div class="pdf-modal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
+    <div class="pdf-modal-header">
+      <h3 id="pdfModalTitle" class="pdf-modal-title">Print Preview</h3>
+      <div class="pdf-modal-actions">
+        <button type="button" id="pdfCloseBtn" class="pdf-modal-btn close">Close</button>
+      </div>
+    </div>
+    <iframe id="pdfViewerFrame" title="PDF Preview"></iframe>
+  </div>
+</div>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="https://unpkg.com/pizzip@3.2.0/dist/pizzip.js"></script>
+<script src="https://unpkg.com/pizzip@3.2.0/dist/pizzip-utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.43.0/build/docxtemplater.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docxtemplater-image-module-free-browserify@1.0.1/build/image-module-browser.js"></script>
+
+
+
+
+<script>
+// Get registrationId from query params
+const params = new URLSearchParams(window.location.search);
+const registrationId = params.get("registrationId");
+let existingReturnedImages = [];
+
+async function loadReturnedImages(registrationId) {
+    if (!registrationId) return;
+
+    try {
+        // Fetch the registration data (adjust endpoint to your backend)
+        const res = await fetch(`/registrations/${registrationId}/images`);
+        if (!res.ok) {
+            existingReturnedImages = [];
+            return;
+        }
+        const images = await res.json(); // API returns: [{ id, filename, filepath }, ...]
+        existingReturnedImages = (Array.isArray(images) ? images : []).slice(0, 10);
+        
+        existingReturnedImages.forEach((imgObj, idx) => {
+            const slot = idx + 1;
+            const preview = document.getElementById(`preview${slot}`);
+            if (!preview) return;
+
+            preview.innerHTML = ""; // Clear existing content
+            const img = document.createElement("img");
+            img.src = imgObj.filepath;
+            img.style.width = "150px";
+            img.style.height = "100px";
+            img.style.objectFit = "cover";
+            img.style.border = "2px solid #ccc";
+            img.style.borderRadius = "4px";
+            preview.appendChild(img);
+        });
+    } catch (err) {
+        console.error("Error loading returned images:", err);
+    }
+}
+
+// Call on page load
+loadReturnedImages(registrationId);
+    
+function setupPreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const previewContainer = document.getElementById(previewId);
+
+    if (!input || !previewContainer) return; 
+
+    input.addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        previewContainer.innerHTML = "";
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = document.createElement("img");
+            img.src = event.target.result;
+            img.style.width = "150px";
+            img.style.height = "100px";
+            img.style.objectFit = "cover";
+            img.style.border = "2px solid #ccc";
+            img.style.borderRadius = "4px";
+            img.style.marginTop = "10px";
+            
+            const fileName = document.createElement("p");
+            fileName.textContent = file.name;
+            fileName.style.fontSize = "10px";
+            fileName.style.color = "#333";
+
+            previewContainer.appendChild(img);
+            previewContainer.appendChild(fileName);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+const landscapePreferredImageIds = new Set(["img1", "img2", "img3"]);
+const portraitPreferredImageIds = new Set(["img4", "img6", "img7", "img8", "img9", "img10"]);
+
+function fileToImage(file) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            resolve(img);
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error("Could not read selected image."));
+        };
+        img.src = objectUrl;
+    });
+}
+
+async function getExifOrientation(file) {
+    if (!file || !/jpe?g$/i.test(file.type)) return 1;
+    try {
+        const buffer = await file.arrayBuffer();
+        const view = new DataView(buffer);
+        if (view.getUint16(0, false) !== 0xFFD8) return 1;
+
+        let offset = 2;
+        while (offset < view.byteLength) {
+            const marker = view.getUint16(offset, false);
+            offset += 2;
+            if (marker === 0xFFE1) {
+                const exifLength = view.getUint16(offset, false);
+                offset += 2;
+                if (view.getUint32(offset, false) !== 0x45786966) return 1; 
+                offset += 6;
+
+                const little = view.getUint16(offset, false) === 0x4949;
+                const firstIFDOffset = view.getUint32(offset + 4, little);
+                let dirOffset = offset + firstIFDOffset;
+                const entries = view.getUint16(dirOffset, little);
+                dirOffset += 2;
+
+                for (let i = 0; i < entries; i++) {
+                    const entryOffset = dirOffset + i * 12;
+                    const tag = view.getUint16(entryOffset, little);
+                    if (tag === 0x0112) {
+                        return view.getUint16(entryOffset + 8, little) || 1;
+                    }
+                }
+                return 1;
+            }
+            if ((marker & 0xFF00) !== 0xFF00) break;
+            offset += view.getUint16(offset, false);
+        }
+    } catch (_) {
+        return 1;
+    }
+    return 1;
+}
+
+function drawWithExifOrientation(ctx, img, orientation, width, height) {
+    switch (orientation) {
+        case 2: ctx.translate(width, 0); ctx.scale(-1, 1); break;
+        case 3: ctx.translate(width, height); ctx.rotate(Math.PI); break;
+        case 4: ctx.translate(0, height); ctx.scale(1, -1); break;
+        case 5: ctx.rotate(0.5 * Math.PI); ctx.scale(1, -1); break;
+        case 6: ctx.rotate(0.5 * Math.PI); ctx.translate(0, -height); break;
+        case 7: ctx.rotate(0.5 * Math.PI); ctx.translate(width, -height); ctx.scale(-1, 1); break;
+        case 8: ctx.rotate(-0.5 * Math.PI); ctx.translate(-width, 0); break;
+        default: break;
+    }
+    ctx.drawImage(img, 0, 0, width, height);
+}
+
+function rotateCanvas90(canvas) {
+    const rotated = document.createElement("canvas");
+    rotated.width = canvas.height;
+    rotated.height = canvas.width;
+    const rctx = rotated.getContext("2d");
+    rctx.translate(rotated.width / 2, rotated.height / 2);
+    rctx.rotate(-Math.PI / 2);
+    rctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+    return rotated;
+}
+
+async function prepareImageForDocument(imageId, file) {
+    if (!file || !file.type || !file.type.startsWith("image/")) return file;
+    if (!portraitPreferredImageIds.has(imageId) && !landscapePreferredImageIds.has(imageId)) return file;
+
+    const exifOrientation = await getExifOrientation(file);
+    const image = await fileToImage(file);
+    const swapsDimensions = [5, 6, 7, 8].includes(exifOrientation);
+
+    const normalizedCanvas = document.createElement("canvas");
+    normalizedCanvas.width = swapsDimensions ? image.height : image.width;
+    normalizedCanvas.height = swapsDimensions ? image.width : image.height;
+    const nctx = normalizedCanvas.getContext("2d");
+    drawWithExifOrientation(nctx, image, exifOrientation, image.width, image.height);
+
+    let outputCanvas = normalizedCanvas;
+    const isLandscape = outputCanvas.width >= outputCanvas.height;
+    const shouldRotateToPortrait = portraitPreferredImageIds.has(imageId) && isLandscape;
+    const shouldRotateToLandscape = landscapePreferredImageIds.has(imageId) && !isLandscape;
+    if (shouldRotateToPortrait || shouldRotateToLandscape) {
+        outputCanvas = rotateCanvas90(outputCanvas);
+    } else if (exifOrientation === 1) {
+        return file;
+    }
+
+    const blob = await new Promise((resolve) => {
+        outputCanvas.toBlob(resolve, "image/jpeg", 0.92);
+    });
+    if (!blob) return file;
+
+    const baseName = file.name.replace(/\.[^.]+$/, "");
+    return new File([blob], `${baseName}_portrait.jpg`, { type: "image/jpeg" });
+}
+
+const renewalFormData = JSON.parse(localStorage.getItem("chainsawFormData")) || {};
+const requiresDeedOfSale = Boolean(renewalFormData.ownerChanged);
+const activeImageIds = requiresDeedOfSale
+    ? ["img1", "img2", "img3", "img4", "img5", "img6", "img7", "img8", "img9", "img10"]
+    : ["img1", "img2", "img3", "img4", "img6", "img7", "img8", "img9", "img10"];
+
+function applyRenewalAttachmentLayout() {
+    const deedBox = document.getElementById("deedOfSaleBox");
+    if (deedBox) deedBox.style.display = requiresDeedOfSale ? "" : "none";
+
+    const labelMap = requiresDeedOfSale
+        ? {
+            labelImg6: "6. Brgy Certification",
+            labelImg7: "7. Affidavit of Legal Use",
+            labelImg8: "8. Receipt of Chainsaw",
+            labelImg9: "9. Permit to Sell",
+            labelImg10: "10. Receipt of Payment"
+        }
+        : {
+            labelImg6: "5. Brgy Certification",
+            labelImg7: "6. Affidavit of Legal Use",
+            labelImg8: "7. Receipt of Chainsaw",
+            labelImg9: "8. Permit to Sell",
+            labelImg10: "9. Receipt of Payment"
+        };
+
+    Object.keys(labelMap).forEach((id) => {
+        const label = document.getElementById(id);
+        if (label) label.textContent = labelMap[id];
+    });
+}
+
+applyRenewalAttachmentLayout();
+
+
+activeImageIds.forEach((imgId) => {
+    setupPreview(imgId, imgId.replace("img", "preview"));
+});
+
+
+document.querySelector(".print-btn").addEventListener("click", async () => {
+    const btn = document.querySelector(".print-btn");
+    const originalText = btn.textContent;
+    if (!startProgress("Generating PDF preview...")) return;
+    
+    
+    btn.textContent = "Generating PDF preview...";
+    btn.disabled = true;
+
+    const createData = JSON.parse(localStorage.getItem("chainsawFormData")) || {};
+    const inspectionData = JSON.parse(localStorage.getItem("inspectionFormData")) || {};
+    const formData = new FormData();
+
+    
+    const data = { ...createData, ...inspectionData };
+    for (const key in data) { formData.append(key, data[key]); }
+
+    
+    for (const imgId of activeImageIds) {
+        const fileInput = document.getElementById(imgId);
+        if (fileInput && fileInput.files[0]) {
+            const preparedFile = await prepareImageForDocument(imgId, fileInput.files[0]);
+            formData.append(imgId, preparedFile);
+        }
+    }
+
+    try {
+        const res = await fetch("/generate-pdf", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) throw new Error("Could not generate PDF");
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        
+        openPdfModal(url);
+        finishProgress(true, "PDF preview generated successfully.");
+        
+        
+        btn.textContent = originalText;
+        btn.disabled = false;
+
+    } catch (err) {
+        finishProgress(false, "Failed to generate PDF preview.");
+        alert("âŒ Error generating PDF preview: " + err.message);
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+});
+
+const socket = io();
+const sessionId = "sess-" + Date.now();
+let selectedSlot = 1;
+let serverBaseUrl = window.location.origin;
+
+async function loadServerBaseUrl() {
+    try {
+        const res = await fetch("/server-base-url");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.baseUrl) serverBaseUrl = data.baseUrl;
+    } catch (_) {}
+}
+
+loadServerBaseUrl();
+const qrModalOverlay = document.getElementById("qrModalOverlay");
+const qrCanvasWrap = document.getElementById("qrCanvasWrap");
+const qrModalSubtext = document.getElementById("qrModalSubtext");
+const qrCloseBtn = document.getElementById("qrCloseBtn");
+const progressOverlay = document.getElementById("progressOverlay");
+const progressFill = document.getElementById("progressFill");
+const progressTitle = document.getElementById("progressTitle");
+const progressText = document.getElementById("progressText");
+const pdfModalOverlay = document.getElementById("pdfModalOverlay");
+const pdfViewerFrame = document.getElementById("pdfViewerFrame");
+const pdfCloseBtn = document.getElementById("pdfCloseBtn");
+let progressTimer = null;
+let progressValue = 0;
+let isProcessing = false;
+let currentPdfUrl = null;
+
+socket.emit("join-session", sessionId);
+
+function startProgress(title) {
+    if (isProcessing) return false;
+    isProcessing = true;
+    document.body.classList.add("processing-lock");
+    document.body.setAttribute("aria-busy", "true");
+    progressTitle.textContent = title || "Processing...";
+    progressText.textContent = "Please wait while the file is being prepared.";
+    progressOverlay.style.display = "flex";
+    progressOverlay.setAttribute("aria-hidden", "false");
+    progressValue = 8;
+    progressFill.style.width = progressValue + "%";
+
+    if (progressTimer) clearInterval(progressTimer);
+    progressTimer = setInterval(() => {
+        if (progressValue < 92) {
+            progressValue += Math.random() * 6;
+            if (progressValue > 92) progressValue = 92;
+            progressFill.style.width = progressValue + "%";
+        }
+    }, 220);
+    return true;
+}
+
+function finishProgress(success, message) {
+    if (progressTimer) {
+        clearInterval(progressTimer);
+        progressTimer = null;
+    }
+    progressFill.style.width = "100%";
+    progressText.textContent = message || (success ? "Completed." : "Failed.");
+
+    setTimeout(() => {
+        progressOverlay.style.display = "none";
+        progressOverlay.setAttribute("aria-hidden", "true");
+        progressFill.style.width = "0%";
+        isProcessing = false;
+        document.body.classList.remove("processing-lock");
+        document.body.removeAttribute("aria-busy");
+    }, 500);
+}
+
+function openPdfModal(pdfUrl) {
+    if (currentPdfUrl) {
+        try { URL.revokeObjectURL(currentPdfUrl); } catch (_) {}
+    }
+    currentPdfUrl = pdfUrl;
+    pdfViewerFrame.src = `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`;
+    pdfModalOverlay.style.display = "flex";
+    pdfModalOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closePdfModal() {
+    pdfModalOverlay.style.display = "none";
+    pdfModalOverlay.setAttribute("aria-hidden", "true");
+    pdfViewerFrame.src = "";
+    if (currentPdfUrl) {
+        try { URL.revokeObjectURL(currentPdfUrl); } catch (_) {}
+        currentPdfUrl = null;
+    }
+}
+
+function blockWhileProcessing(e) {
+    if (!isProcessing) return;
+    const insideProgress = e.target && e.target.closest && e.target.closest("#progressOverlay");
+    if (!insideProgress) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+    }
+}
+
+document.addEventListener("click", blockWhileProcessing, true);
+document.addEventListener("contextmenu", blockWhileProcessing, true);
+document.addEventListener("submit", blockWhileProcessing, true);
+document.addEventListener("keydown", (e) => {
+    if (!isProcessing) return;
+    const allowedKeys = ["F5"];
+    if (!allowedKeys.includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+}, true);
+
+pdfCloseBtn.addEventListener("click", closePdfModal);
+
+pdfModalOverlay.addEventListener("click", (e) => {
+    if (e.target === pdfModalOverlay) closePdfModal();
+});
+
+
+document.querySelectorAll(".upload-box").forEach((box, index) => {
+    const slotNumber = Number(box.dataset.slot || (index + 1));
+
+    box.addEventListener("click", () => {
+        selectedSlot = slotNumber;
+    });
+
+    box.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        selectedSlot = slotNumber;
+        openPhoneForSlot(slotNumber);
+    });
+});
+
+document.getElementById("usePhoneBtn").addEventListener("click", () => {
+    openPhoneForSlot(selectedSlot);
+});
+
+qrCloseBtn.addEventListener("click", () => {
+    qrModalOverlay.style.display = "none";
+    qrModalOverlay.setAttribute("aria-hidden", "true");
+});
+
+qrModalOverlay.addEventListener("click", (e) => {
+    if (e.target === qrModalOverlay) {
+        qrModalOverlay.style.display = "none";
+        qrModalOverlay.setAttribute("aria-hidden", "true");
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && qrModalOverlay.style.display === "flex") {
+        qrModalOverlay.style.display = "none";
+        qrModalOverlay.setAttribute("aria-hidden", "true");
+    }
+    if (e.key === "Escape" && pdfModalOverlay.style.display === "flex") {
+        closePdfModal();
+    }
+});
+
+function openPhoneForSlot(slotNumber) {
+    const url = `${serverBaseUrl}/mobile.html?session=${sessionId}&slot=${slotNumber}`;
+
+    QRCode.toCanvas(url, (err, canvas) => {
+        if (err) return;
+        qrCanvasWrap.innerHTML = "";
+        qrCanvasWrap.appendChild(canvas);
+        qrModalSubtext.textContent = `Slot ${slotNumber}: Scan this code on your phone.`;
+        qrModalOverlay.style.display = "flex";
+        qrModalOverlay.setAttribute("aria-hidden", "false");
+    });
+}
+
+
+socket.on("image-uploaded", (data) => {
+    const preview = document.getElementById(`preview${data.slot}`);
+    if (!preview) return;
+    preview.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = data.imageUrl;
+    img.style.width = "150px";
+    img.style.height = "100px";
+    img.style.objectFit = "cover";
+
+    preview.appendChild(img);
+
+    
+    fetch(data.imageUrl)
+        .then(res => res.blob())
+        .then(blob => {
+            const file = new File([blob], "mobile.jpg", { type: blob.type });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            const input = document.getElementById(`img${data.slot}`);
+            if (input) input.files = dataTransfer.files;
+        });
+});
+
+</script>
+<script>
+(function () {
+  const sendBtn = document.getElementById("Sendforapprove");
+  if (!sendBtn) return;
+
+    sendBtn.addEventListener("click", async () => {
+    try {
+      const createData = JSON.parse(localStorage.getItem("chainsawFormData")) || {};
+      const inspectionData = JSON.parse(localStorage.getItem("inspectionFormData")) || {};
+      const loggedInUser = JSON.parse(localStorage.getItem("user")) || {};
+      const token = localStorage.getItem("token") || "";
+      const toNullableFkId = (value) => {
+        const parsed = Number(value);
+        if (!Number.isFinite(parsed) || parsed <= 0) return null;
+        return Math.trunc(parsed);
+      };
+      const decodeTokenUserId = () => {
+        if (!token || token.split(".").length < 2) return null;
+        try {
+          const payload = token.split(".")[1];
+          const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+          const json = JSON.parse(atob(normalized));
+          return json && json.id ? Number(json.id) : null;
+        } catch (_) {
+          return null;
+        }
+      };
+      const tokenUserId = decodeTokenUserId();
+
+      const queryId = new URLSearchParams(window.location.search).get("registrationId");
+      const id = Number(queryId);
+      if (!Number.isFinite(id) || id <= 0) {
+        alert("Missing or invalid registrationId in URL. Open this page from Returned table > Next.");
+        return;
+      }
+
+      const approvedByUser = {
+        fullname: createData.approvedBy || "VIRGIE D. TADLE",
+        position: createData.position || "LMO III/ Chief, RPS",
+        id: toNullableFkId(createData.approvedBy_id)
+      };
+      const recommendingApprovalName = String(inspectionData.recommendingApprovalName || inspectionData.approvedByName || "").trim();
+      const recommendingApprovalPosition = String(inspectionData.recommendingApprovalPosition || inspectionData.approvedByPosition || "").trim();
+      const evaluatedById = toNullableFkId(createData.evaluatedBy_id || inspectionData.evaluatedBy_id || loggedInUser.id || tokenUserId);
+      const recommendingApprovalId = toNullableFkId(createData.recommendingApproval_id || inspectionData.recommendingApproval_id);
+
+      const tatStart = new Date();
+      const tatExpiry = new Date(tatStart.getTime() + ((2 * 24 * 60 * 60 * 1000) + (4 * 60 * 60 * 1000) + (30 * 60 * 1000)));
+
+      const data = {
+        regNo: createData.regNo || "",
+        ownerName: createData.ownerName || "",
+        address: createData.address || "",
+        brand: createData.brand || "",
+        model: createData.model || "",
+        datePurchased: createData.dateAcquired || "",
+        serialNo: createData.serialNo || "",
+        horsepower: createData.horsepower || "",
+        guidebar: createData.guidebar || "",
+        others: createData.others || "",
+        dateRegistered: createData.issuedOn || "",
+        expiryDate: createData.expiryDate || "",
+        purpose: inspectionData.purpose || createData.useCase || "",
+        remarks: inspectionData.remarks || createData.others || "",
+        receiptNo: inspectionData.receiptNo || "",
+        orNumber: inspectionData.orNumber || "",
+        performanceEval: inspectionData.performanceEval || "",
+        recommendation: inspectionData.recommendation || "",
+        dealer: inspectionData.dealer || "N/A",
+        recommendingApproval: null,
+        approvedByComment: null,
+        evaluatedByName: (loggedInUser.fullname || "Unknown User").toUpperCase(),
+        evaluatedByPosition: loggedInUser.position || "EMS I/ Chief, Utilization Unit",
+        evaluatedBy_id: evaluatedById,
+        approvedByName: (approvedByUser.fullname || "Unknown").toUpperCase(),
+        approvedByPosition: approvedByUser.position || "CENR Officer",
+        approvedBy_id: approvedByUser.id,
+        recommendingApprovalName: recommendingApprovalName ? recommendingApprovalName.toUpperCase() : "",
+        recommendingApprovalPosition: recommendingApprovalPosition || "",
+        recommendingApproval_id: recommendingApprovalId,
+        tatStart: tatStart.toISOString(),
+        tatExpiry: tatExpiry.toISOString()
+      };
+
+      if (typeof startProgress === "function") startProgress("Sending returned file to evaluation...");
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data));
+
+      for (let i = 1; i <= 10; i++) {
+        const input = document.getElementById(`img${i}`);
+        const selectedFile = input && input.files && input.files[0] ? input.files[0] : null;
+        if (selectedFile) {
+          formData.append("images", selectedFile);
+          continue;
+        }
+
+        const existing = existingReturnedImages[i - 1];
+        if (!existing || !existing.filepath) continue;
+        try {
+          const res = await fetch(existing.filepath);
+          if (!res.ok) continue;
+          const blob = await res.blob();
+          const filename = existing.filename || `img${i}.jpg`;
+          const type = blob.type || "image/jpeg";
+          formData.append("images", new File([blob], filename, { type }));
+        } catch (_) {
+          // best-effort: skip missing existing file
+        }
+      }
+
+      const res = await fetch(`/registrations/reevaluate/${id}`, {
+        method: "POST",
+        body: formData
+      });
+
+      const contentType = res.headers.get("content-type") || "";
+      let result = null;
+      if (contentType.includes("application/json")) {
+        result = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Server returned non-JSON response (status ${res.status}): ${text.slice(0, 180)}`);
+      }
+
+      if (!res.ok) throw new Error(result.message || `Request failed (${res.status})`);
+
+      if (typeof finishProgress === "function") finishProgress(true, "Returned file sent back to evaluation.");
+      alert(result.message || "Returned file moved back to evaluation.");
+      localStorage.removeItem("chainsawFormData");
+      localStorage.removeItem("inspectionFormData");
+      localStorage.removeItem("returnedReevaluationContext");
+      window.location.href = "/MainDashboard/SidePANEL/Returned/return.html";
+    } catch (err) {
+      console.error(err);
+      if (typeof finishProgress === "function") finishProgress(false, "Failed to send returned file.");
+      alert("Error sending returned file to evaluation: " + err.message);
+      return;
+    }
+  });
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+

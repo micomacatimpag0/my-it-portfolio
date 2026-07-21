@@ -1,0 +1,738 @@
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif; 
+}
+
+body { 
+    display: flex; 
+    background-color: #f8fafc; 
+    height: 100vh; 
+    overflow: hidden; 
+}
+
+/* Returned page layout */
+.returned-page .main {
+    background-color: #f4f7f6;
+    background: linear-gradient(
+            to bottom,
+            rgba(12, 12, 12, 0.70) 60%,
+            var(--primary) 100%
+        ),
+        url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg')
+        center/cover no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    overflow-y: auto;
+    background-attachment: fixed;
+}
+
+.returned-page .filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0 20px 0;
+    color: #f8fafc;
+    flex-wrap: wrap;
+}
+
+.returned-page .filters label {
+    font-weight: 600;
+}
+
+.returned-page .filter-search {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.28);
+    font-size: 14px;
+    outline: none;
+    min-width: 220px;
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.returned-page .filter-search::placeholder {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.returned-page .clickable-cell { cursor: pointer; }
+.returned-page .clickable-cell:hover { background: rgba(248, 250, 252, 0.65); }
+.returned-page .edit-dialog { max-width: 1100px; width: 96%; max-height: 92vh; overflow: auto; }
+.returned-page .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+
+@media (max-width: 768px) {
+    .returned-page .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .returned-page .filter-search {
+        width: 100%;
+    }
+}
+
+/* For Print page layout */
+.forprint-page .main {
+    background-color: #f4f7f6;
+    background: linear-gradient(
+            to bottom,
+            rgba(12, 12, 12, 0.70) 60%,
+            var(--primary) 100%
+        ),
+        url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg')
+        center/cover no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    overflow-y: auto;
+    background-attachment: fixed;
+}
+
+.forprint-page .filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0 20px 0;
+    color: #f8fafc;
+    flex-wrap: wrap;
+}
+
+.forprint-page .filters label {
+    font-weight: 600;
+}
+
+.forprint-page .filter-select,
+.forprint-page .filter-search {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.28);
+    font-size: 14px;
+    outline: none;
+    min-width: 180px;
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.forprint-page .filter-search {
+    flex: 1;
+    min-width: 220px;
+}
+
+.forprint-page .filter-search::placeholder,
+.forprint-page .filter-select::placeholder {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.forprint-page .filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 36px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #1b5e20 50%),
+        linear-gradient(135deg, #1b5e20 50%, transparent 50%),
+        linear-gradient(to right, rgba(27, 94, 32, 0.2), rgba(27, 94, 32, 0.2));
+    background-position:
+        calc(100% - 18px) 52%,
+        calc(100% - 12px) 52%,
+        calc(100% - 36px) 50%;
+    background-size:
+        6px 6px,
+        6px 6px,
+        1px 18px;
+    background-repeat: no-repeat;
+}
+
+.forprint-page .pdf-dialog {
+    max-width: 900px;
+    width: 95%;
+}
+
+.forprint-page .pdf-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.forprint-page .pdf-fullscreen-btn {
+    padding: 6px 10px;
+}
+
+.forprint-page .pdf-frame {
+    width: 100%;
+    height: 70vh;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.forprint-page .pdf-actions {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .forprint-page .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .forprint-page .filter-select,
+    .forprint-page .filter-search {
+        width: 100%;
+    }
+}
+
+/* Approval page layout */
+.approval-page .main {
+    background-color: #f4f7f6;
+    background: linear-gradient(
+            to bottom,
+            rgba(12, 12, 12, 0.70) 60%,
+            var(--primary) 100%
+        ),
+        url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg')
+        center/cover no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    overflow-y: auto;
+    background-attachment: fixed;
+}
+
+.approval-page .filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0 20px 0;
+    color: #f8fafc;
+    flex-wrap: wrap;
+}
+
+.approval-page .filters label {
+    font-weight: 600;
+}
+
+.approval-page .filter-select,
+.approval-page .filter-search {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.28);
+    font-size: 14px;
+    outline: none;
+    min-width: 180px;
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.approval-page .filter-search {
+    flex: 1;
+    min-width: 220px;
+}
+
+.approval-page .filter-select::placeholder,
+.approval-page .filter-search::placeholder {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.approval-page .pdf-dialog {
+    max-width: 900px;
+    width: 95%;
+}
+
+.approval-page .pdf-frame {
+    width: 100%;
+    height: 70vh;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.approval-page .pdf-actions {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .approval-page .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .approval-page .filter-select,
+    .approval-page .filter-search {
+        width: 100%;
+    }
+}
+
+/* For Printing page layout */
+.forprinting-page .main {
+    background-color: #f4f7f6;
+    background: linear-gradient(
+            to bottom,
+            rgba(12, 12, 12, 0.70) 60%,
+            var(--primary) 100%
+        ),
+        url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg')
+        center/cover no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    overflow-y: auto;
+    background-attachment: fixed;
+}
+
+.forprinting-page .filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0 20px 0;
+    color: #f8fafc;
+    flex-wrap: wrap;
+}
+
+.forprinting-page .filters label {
+    font-weight: 600;
+}
+
+.forprinting-page .filter-select,
+.forprinting-page .filter-search {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.28);
+    font-size: 14px;
+    outline: none;
+    min-width: 180px;
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.forprinting-page .filter-search {
+    flex: 1;
+    min-width: 220px;
+}
+
+.forprinting-page .filter-select::placeholder,
+.forprinting-page .filter-search::placeholder {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+/* For Printing PDF modal layout */
+.forprinting-page .pdf-dialog {
+    max-width: 1200px;
+    width: 95%;
+}
+
+.forprinting-page .pdf-grid {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.forprinting-page .pdf-panel {
+    flex: 0 0 320px;
+    max-width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.forprinting-page .pdf-panel-title {
+    margin-bottom: 6px;
+}
+
+.forprinting-page .pdf-panel-fields {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.forprinting-page .pdf-field {
+    font-weight: 600;
+    color: #334155;
+}
+
+.forprinting-page .pdf-field select,
+.forprinting-page .pdf-field textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.forprinting-page .pdf-field textarea {
+    resize: vertical;
+}
+
+.forprinting-page .pdf-actions {
+    margin-top: 15px;
+}
+
+.forprinting-page .pdf-close-btn {
+    background-color: #64748b;
+    margin-left: 10px;
+}
+
+.forprinting-page .pdf-preview {
+    flex: 1 1 520px;
+    min-width: 300px;
+}
+
+.forprinting-page .pdf-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.forprinting-page .pdf-fullscreen-btn {
+    padding: 6px 10px;
+}
+
+.forprinting-page .pdf-frame {
+    width: 100%;
+    height: 70vh;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .forprinting-page .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .forprinting-page .filter-select,
+    .forprinting-page .filter-search {
+        width: 100%;
+    }
+    .forprinting-page .pdf-panel {
+        flex: 1 1 100%;
+    }
+}
+
+
+.main { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    height: 100vh;
+    overflow: hidden; 
+}
+
+.topnav { 
+    background: white; 
+    padding: 15px 30px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-shrink: 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.search-container { position: relative; width: 75%; }
+
+.topnav input { 
+    width: 100%; 
+    padding: 12px 20px; 
+    border-radius: 10px; 
+    border: none; 
+    background: #ecf3ee; 
+    outline: none; 
+    font-size: 15px; 
+}
+
+.nav-actions { display: flex; gap: 18px; align-items: center; }
+.icon-bell { color: #fbbf24; cursor: pointer; }
+.icon-user { color: #4338ca; cursor: pointer; }
+
+
+.content-wrapper { 
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    padding-top: 1px;
+    border-radius: 1px;
+}
+
+.page-header h1 { 
+    font-size: 24px; 
+    color: #f0f2f5;
+    text-align: left;
+    font-family: 'Times New Roman', Times, serif;
+    margin-bottom: 1px;
+ }
+
+.table-container { 
+    background: rgba(255, 255, 255, 0.42); 
+    border-radius: 14px; 
+    border: 1px solid rgba(255, 255, 255, 0.45); 
+    flex: 1; 
+    overflow-y: auto; 
+    overflow-x: auto;
+    box-shadow:
+        0 18px 36px rgba(15, 23, 42, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+}
+
+.data-table { width: 100%; border-collapse: collapse; }
+
+
+.data-table th { 
+    background: rgba(248, 250, 252, 0.42); 
+    text-align: left; 
+    padding: 16px; 
+    font-size: 13px; 
+    color: #64748b; 
+    position: sticky; 
+    top: 0; 
+    z-index: 10;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+    backdrop-filter: blur(12px) saturate(1.15);
+    -webkit-backdrop-filter: blur(12px) saturate(1.15);
+}
+
+.data-table td { 
+    padding: 16px; 
+    border-bottom: 1px solid rgba(241, 245, 249, 0.625); 
+    font-size: 14px; 
+    color: #334155;
+    vertical-align: top;
+    padding-top: 12px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+}
+
+.data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.652);
+}
+
+/* Registered page table transparency override */
+.registered-page .table-container table {
+  background: rgba(255, 255, 255, 0.166);
+}
+
+.registered-page .table-container th {
+  background: rgba(248, 250, 252, 0.862);
+}
+
+.registered-page .table-container td {
+  background: rgba(255, 255, 255, 0.349);
+}
+
+.registered-page .data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.753);
+}
+
+/* For Printing table match registered table look */
+.forprinting-page .table-container {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.forprinting-page .data-table th {
+    background: rgba(248, 250, 252, 0.862);
+}
+
+.forprinting-page .data-table td {
+    background: rgba(255, 255, 255, 0.349);
+}
+
+.forprinting-page .data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.755);
+}
+
+/* Approval table match registered table look */
+.approval-page .table-container {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.approval-page .data-table th {
+    background: rgba(248, 250, 252, 0.862);
+}
+
+.approval-page .data-table td {
+    background: rgba(255, 255, 255, 0.349);
+}
+
+.approval-page .data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.755);
+}
+
+/* Registered page filters (liquid glass) */
+.registered-page .filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0 20px 0;
+    color: #f8fafc;
+    flex-wrap: wrap;
+}
+
+.registered-page .filters label {
+    font-weight: 600;
+}
+
+.registered-page .filter-select,
+.registered-page .filter-search {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.28);
+    font-size: 14px;
+    outline: none;
+    min-width: 180px;
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.registered-page .filter-search {
+    flex: 1;
+    min-width: 220px;
+}
+
+.registered-page .filter-select::placeholder,
+.registered-page .filter-search::placeholder {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.approval-page .filter-select,
+.forprinting-page .filter-select,
+.registered-page .filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 36px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #1b5e20 50%),
+        linear-gradient(135deg, #1b5e20 50%, transparent 50%),
+        linear-gradient(to right, rgba(27, 94, 32, 0.2), rgba(27, 94, 32, 0.2));
+    background-position:
+        calc(100% - 18px) 52%,
+        calc(100% - 12px) 52%,
+        calc(100% - 36px) 50%;
+    background-size:
+        6px 6px,
+        6px 6px,
+        1px 18px;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    .registered-page .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .registered-page .filter-select,
+    .registered-page .filter-search {
+        width: 100%;
+    }
+}
+
+
+.btn { 
+    padding: 6px 12px; border-radius: 6px; border: none; font-size: 12px; 
+    font-weight: 600; color: white; cursor: pointer;
+}
+.btn-view { background: #6366f1; }
+
+
+.table-container::-webkit-scrollbar { width: 6px; }
+.table-container::-webkit-scrollbar-thumb { background: #cbd5e1c8; border-radius: 10px; }
+
+.progress-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+    }
+
+.progress-modal {
+    width: 100%;
+    max-width: 360px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.progress-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #111827;
+}
+
+.progress-track {
+    width: 100%;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #0f766e, #14b8a6);
+    transition: width 220ms linear;
+}
+
+.progress-text {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #374151;
+}
+
+body.processing-lock {
+    overflow: hidden;
+}
+
+body.processing-lock > * {
+    pointer-events: none;
+}
+
+body.processing-lock #progressOverlay {
+    pointer-events: auto;
+}
+
+tr.selectable-row {
+    cursor: pointer;
+}
+
+tr.selectable-row.is-selected {
+    outline: 2px solid #2E86C1;
+    outline-offset: -2px;
+    background: rgba(46, 134, 193, 0.08);
+}
+
+.btn-released {
+    background-color: #dc2626 !important;
+    color: white !important;
+    border: none;
+    cursor: not-allowed !important;
+    opacity: 0.9;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+}

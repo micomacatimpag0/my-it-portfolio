@@ -1,0 +1,155 @@
+/* --- 1. Global Layout Fix --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex !important; /* Sidebar and Main sit side-by-side */
+  height: 100vh;
+  width: 100vw;
+  background-color: #f8fafc;
+  overflow: hidden;
+}
+
+/* --- 2. Sidebar: Fixed & Stable --- */
+.sidebar {
+  width: 240px !important;
+  min-width: 240px; /* Prevents sidebar from shrinking */
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0; /* CRITICAL: Prevents main content from squishing the sidebar */
+  z-index: 10;
+}
+
+.sidebar h2 {
+  font-size: 1.1rem;
+  padding: 30px 20px;
+  color: #1a202c;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sidebar ul { list-style: none; }
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 25px;
+  text-decoration: none;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.sidebar li a.active {
+  background: #f1f5f9;
+  color: #2b6cb0;
+  font-weight: 600;
+  border-left: 4px solid #2b6cb0;
+}
+
+/* --- 3. Main Content: Fluid & Safe --- */
+.main {
+  flex: 1 !important; /* Takes up all remaining space */
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* CRITICAL: Allows the table to shrink without breaking the flexbox */
+  overflow-y: auto;
+}
+
+.topnav {
+  height: 60px;
+  background: white;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  justify-content: space-between;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.topnav input {
+  background: #f1f5f9;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  width: 400px;
+  outline: none;
+}
+
+/* --- 4. The Table & "Little Buttons" Fix --- */
+.table-container {
+  margin: 20px 40px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  overflow-x: auto; /* Adds scrollbar if buttons still won't fit on tiny screens */
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Lets the Action column expand as needed */
+}
+
+.data-table th, .data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+}
+
+/* ACTION CELL: Forces Image 1 look regardless of Sidebar */
+.action-cell {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important; /* NO STACKING ALLOWED */
+  gap: 4px !important;           /* Tight spacing */
+  align-items: center;
+}
+
+.action-cell button {
+  flex: 0 0 auto !important;     /* Buttons won't shrink */
+  border: none;
+  padding: 5px 10px !important;  /* "Little button" padding */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px !important;    /* Compact text */
+  font-weight: 600;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap !important; /* Text never breaks to 2 lines */
+}
+
+/* Button Colors */
+.btn-view { background-color: #3b71ca !important; }
+.btn-approve { background-color: #38a169 !important; }
+.btn-return { background-color: #2d3748 !important; }
+.btn-return.red { background-color: #dc3545 !important; }
+
+/* Badges & Pagination */
+.time-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.time-badge.green { background: #e6fffa; color: #234e52; }
+.time-badge.orange { background: #fffaf0; color: #7b341e; }
+.time-badge.red { background: #fff5f5; color: #742a2a; }
+
+.pagination {
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+}

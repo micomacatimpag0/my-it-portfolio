@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS - Progress</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/progress.css">
+   <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="progress-page">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+      </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>RPS</span></h2>
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/ApprovalDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/evaluation.html">Evaluation</a></li>
+      <li><a href="/MainDashboard/SidePANEL/payment.html">Payment</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Evaluation/progress.html" class="active">Progress</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="content-area">
+      <div class="form-card">
+        <h1 class="form-header">FILE PROGRESS TRACKER</h1>
+
+        <div class="progress-tools">
+          <input type="text" id="q" placeholder="Search reg no, owner, serial">
+          <select id="stageFilter">
+            <option value="All">All</option>
+            <option value="Processing">Processing</option>
+            <option value="Approved - For Release">Approved - For Release</option>
+            <option value="Returned">Returned</option>
+            <option value="Released">Released</option>
+          </select>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Progress records table">
+          <table class="progress-table">
+            <thead>
+              <tr>
+                <th>Reg No</th>
+                <th>Owner</th>
+                <th>Serial No</th>
+                <th>Approval</th>
+              </tr>
+            </thead>
+            <tbody id="rows">
+              <tr><td colspan="4" class="empty">Loading records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="progressModalOverlay" class="progress-modal-overlay" aria-hidden="true">
+    <div class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h3 id="modalTitle" class="modal-title">File Progress</h3>
+        <button id="closeModalBtn" type="button" class="close-btn">Close</button>
+      </div>
+      <div class="modal-body">
+        <div id="fileMeta" class="file-meta"></div>
+        <ul id="timeline" class="timeline"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rowsEl = document.getElementById("rows");
+    const qEl = document.getElementById("q");
+    const stageFilterEl = document.getElementById("stageFilter");
+    const modalOverlay = document.getElementById("progressModalOverlay");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const fileMetaEl = document.getElementById("fileMeta");
+    const timelineEl = document.getElementById("timeline");
+    let allRows = [];
+
+    function txt(v) { return String(v || "").trim(); }
+    function stageOf(item) {
+      const approval = txt(item.approvalStatus || "Pending").toLowerCase();
+      const released = txt(item.releasedStatus || "Pending").toLowerCase();
+      if (released === "released" || item.releasedAt) return "Released";
+      if (approval === "approved") return "Approved - For Release";
+      if (approval === "returned") return "Returned";
+      return "Processing";
+    }
+    function badgeClass(stage) {
+      if (stage === "Released") return "b-released";
+      if (stage === "Approved - For Release") return "b-approved";
+      if (stage === "Returned") return "b-returned";
+      return "b-processing";
+    }
+    function formatReleaseDate(value) {
+      if (!value) return "";
+      if (typeof value === "string") {
+        const trimmed = value.trim();
+        const ymdMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (ymdMatch) return ymdMatch[1];
+      }
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return txt(value);
+      return d.toISOString().slice(0, 10);
+    }
+    function paymentStateOf(item) {
+      return txt(item.payment).toLowerCase() === "paid" ? "Paid" : "Not Paid";
+    }
+    function timelineState(item) {
+      const stage = stageOf(item);
+      const steps = [
+        { title: "Submitted", sub: "File sent for processing" },
+        { title: "Under Evaluation", sub: "Evaluator checking details" },
+        { title: "Approval Stage", sub: `${txt(item.approvalStatus || "Pending")} | ${paymentStateOf(item)}` },
+        { title: "Released", sub: stage === "Released"
+          ? `Released on ${formatReleaseDate(item.releasedAt) || "(date not set)"}`
+          : txt(item.releasedStatus || "Pending") }
+      ];
+      let activeIdx = 1;
+      if (stage === "Processing") activeIdx = 1;
+      if (stage === "Returned" || stage === "Approved - For Release") activeIdx = 2;
+      if (stage === "Released") activeIdx = 3;
+      return steps.map((s, i) => ({ ...s, state: i < activeIdx ? "done" : i === activeIdx ? "active" : "todo" }));
+    }
+    function openProgress(item) {
+      const stage = stageOf(item);
+      const releasedInfo = stage === "Released"
+        ? ` | Released: ${formatReleaseDate(item.releasedAt) || "(date not set)"}`
+        : "";
+      fileMetaEl.textContent = `RegNo: ${txt(item.regNo) || "-"} | Owner: ${txt(item.ownerName) || "-"} | Stage: ${stage}${releasedInfo}`;
+      const steps = timelineState(item);
+      timelineEl.innerHTML = steps.map((s) => `
+        <li class="${s.state} ${(s.title === "Approval Stage" && txt(item.approvalStatus).toLowerCase() === "returned") ? "returned-step" : ""} ${(s.title === "Released" && stage === "Released") ? "released-step" : ""}">
+          <span class="dot"></span>
+          <div>
+            <div class="t-title">${s.title}</div>
+            <div class="t-sub">${s.sub || "-"}</div>
+          </div>
+        </li>
+      `).join("");
+      modalOverlay.style.display = "flex";
+      modalOverlay.setAttribute("aria-hidden", "false");
+    }
+    function closeProgress() {
+      modalOverlay.style.display = "none";
+      modalOverlay.setAttribute("aria-hidden", "true");
+    }
+    function render(items) {
+      if (!items.length) {
+        rowsEl.innerHTML = '<tr><td colspan="4" class="empty">No files found.</td></tr>';
+        return;
+      }
+      rowsEl.innerHTML = items.map((item, idx) => {
+        const stage = stageOf(item);
+        return `
+          <tr class="row-clickable" data-i="${idx}">
+            <td>${txt(item.regNo) || "-"}</td>
+            <td>${txt(item.ownerName) || "-"}</td>
+            <td>${txt(item.serialNo) || "-"}</td>
+            <td><span class="stage-badge ${badgeClass(stage)}">${txt(item.approvalStatus || "Pending")}</span></td>
+          </tr>
+        `;
+      }).join("");
+
+      Array.from(document.querySelectorAll(".row-clickable")).forEach((el) => {
+        el.addEventListener("click", () => {
+          const i = Number(el.dataset.i);
+          const item = items[i];
+          if (item) openProgress(item);
+        });
+      });
+    }
+    function applyFilters() {
+      const q = txt(qEl.value).toLowerCase();
+      const f = stageFilterEl.value;
+      const filtered = allRows.filter((r) => {
+        const stage = stageOf(r);
+        if (f !== "All" && stage !== f) return false;
+        if (!q) return true;
+        return (
+          txt(r.regNo).toLowerCase().includes(q) ||
+          txt(r.ownerName).toLowerCase().includes(q) ||
+          txt(r.serialNo).toLowerCase().includes(q) ||
+          stage.toLowerCase().includes(q)
+        );
+      });
+      render(filtered);
+    }
+    async function load() {
+      try {
+        const res = await fetch("/registrations/evaluation");
+        if (!res.ok) throw new Error("Failed");
+        const data = await res.json();
+        allRows = Array.isArray(data) ? data : [];
+        applyFilters();
+      } catch (_) {
+        rowsEl.innerHTML = '<tr><td colspan="4" class="empty">Failed to load progress records.</td></tr>';
+      }
+    }
+    qEl.addEventListener("input", applyFilters);
+    stageFilterEl.addEventListener("change", applyFilters);
+    closeModalBtn.addEventListener("click", closeProgress);
+    modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) closeProgress(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modalOverlay.style.display === "flex") closeProgress();
+    });
+    load();
+  </script>
+</body>
+</html>

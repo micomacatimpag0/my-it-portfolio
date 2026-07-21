@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+  <title>E-CHAINSAW RMS - Evaluation & Renewal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+   <style>
+    .main {
+      background-color: #f4f7f6;
+      background: linear-gradient(
+                to bottom, 
+                rgba(12, 12, 12, 0.70) 60%, 
+                var(--primary) 100%
+              ),
+              url('/assets/image/mesmerizing-view-lake-surrounded-by-mountains-covered-green-blue-sky.jpg') 
+              center/cover no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+              <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+          </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>EVALUATOR</span></h2>
+    </div>
+
+    <ul>
+      <li><a href="/MainDashboard/EvaluatorDash.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/ForPrint.html">Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/create.html">Create</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Returned/return.html">Returned</a></li>
+      <li><a href="/MainDashboard/SidePANEL/progress.html">Progress</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/Addfiles.html" class="active">Add old Files</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Add_Files/removefiles.html">Remove Files</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+
+    <div class="content-area">
+      <div class="form-card">
+        <h1 class="form-header">REGISTRATION OF POWER CHAINSAW<br>INSPECTION AND EVALUATION REPORT</h1>
+        
+        <form class="registration-form">
+          <div class="input-grid">
+            <div class="form-row">
+                <div class="input-label">Name of Applicant:</div>
+                <input type="text" name="ownerName">
+            </div>
+            <div class="form-row">
+                <div class="input-label">Address:</div>
+                <input type="text" name="address">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Serial number:</div>
+              <input type="text" name="serialNo">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Dealer (name of company/firm):</div>
+              <input type="text" name="dealer">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Date of Purchased:</div>
+              <input type="date" name="datePurchased">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Sales Receipt Number:</div>
+              <input type="text" name="receiptNo">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Purpose of the Chainsaw:</div>
+              <input type="text" name="purpose">
+            </div>
+            <div class="form-row">
+              <div class="input-label">Assessment remarks:</div>
+              <input type="text" name="remarks">
+            </div>
+          </div>
+
+          <h2 class="renewal-header">TO BE FILLED UP IN CASE OF RENEWAL</h2>
+          <div class="input-grid">
+            <div class="form-row"><div class="input-label">Date registered:</div><input type="date" name="dateRegistered" readonly></div>
+            <div class="form-row"><div class="input-label">Expiry Date:</div><input type="date" name="expiryDate" readonly></div>
+            <div class="form-row"><div class="input-label">O.R. number:</div><input type="text" name="orNumber"></div>
+            <div class="form-row"><div class="input-label">Performance Evaluation:</div><input type="text" name="performanceEval"></div>
+            <div class="form-row"><div class="input-label">Date of Purchased:</div><input type="date" name="datePurchasedRenewal"></div>
+            <div class="form-row"><div class="input-label">Recommendation:</div><input type="text" name="recommendation"></div>
+            <div class="form-row"><div class="input-label">Released Date:</div><input type="date" name="releasedAt" required></div>
+            <div class="form-row">
+              <div class="input-label">Payment:</div>
+              <select name="payment" id="paymentStatus">
+                <option value="Pending Payment">Pending Payment</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+            <div class="form-row"><div class="input-label">Amount:</div><input type="number" min="0" step="0.01" name="amount" id="paymentAmount" placeholder="Enter amount"></div>
+          </div>
+
+          <div class="approval-section">
+            <div class="sig-box">
+              <p>Evaluated by:</p>
+              <input type="text" id="evaluatedByName" name="evaluatedByName" placeholder="Enter evaluator name" list="evaluatorList" autocomplete="off" style="text-align: center; margin-bottom: 6px;">
+              <input type="hidden" id="evaluatedById" name="evaluatedBy_id">
+              <datalist id="evaluatorList"></datalist>
+              <input type="text" id="evaluatedByPosition" name="evaluatedByPosition" placeholder="Enter evaluator position" style="text-align: center;">
+            </div>
+            <div class="sig-box">
+              <p>Recommending Approval:</p>
+              <input type="text" id="approvedByName" name="approvedByName" placeholder="Enter approver name" list="approverList" autocomplete="off" style="text-align: center; margin-bottom: 6px;">
+              <input type="hidden" id="recommendingApprovalId" name="recommendingApproval_id">
+              <datalist id="approverList"></datalist>
+              <input type="text" id="approvedByPosition" name="approvedByPosition" placeholder="Enter approver position" style="text-align: center;">
+            </div>
+          </div>
+
+          <div class="form-footer-group">
+            <button type="button" class="back-btn" id="backBtn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sourceData =
+        JSON.parse(localStorage.getItem("addfilesFormData")) ||
+        JSON.parse(localStorage.getItem("chainsawFormData")) ||
+        {};
+
+    const toDateOnly = (value) => {
+      if (!value) return "";
+      const str = String(value).trim();
+      const dateOnly = str.match(/^(\d{4}-\d{2}-\d{2})$/);
+      if (dateOnly) return dateOnly[1];
+      const localLike = str.match(/^(\d{4}-\d{2}-\d{2})[ T]\d{2}:\d{2}/);
+      if (localLike) return localLike[1];
+      const d = new Date(str);
+      if (Number.isNaN(d.getTime())) return "";
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    };
+
+    const map = {
+        ownerName: sourceData.ownerName || "",
+        address: sourceData.address || "",
+        serialNo: sourceData.serialNo || "",
+
+        // Same populate behavior as create -> inspection flow
+        datePurchased: sourceData.dateAcquired || sourceData.datePurchased || "",
+        datePurchasedRenewal: sourceData.dateAcquired || sourceData.datePurchased || "",
+        purpose: sourceData.useCase || sourceData.purpose || "",
+
+        receiptNo: "",
+        remarks: sourceData.others || sourceData.remarks || "",
+
+        dateRegistered: sourceData.issuedOn || sourceData.dateRegistered || "",
+        expiryDate: sourceData.expiryDate || "",
+        releasedAt: toDateOnly(sourceData.releasedAt || ""),
+        amount: sourceData.amount != null ? String(sourceData.amount) : ""
+    };
+
+        Object.keys(map).forEach(name => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (input && map[name] !== undefined && !input.value) {
+            // Only populate if input is empty
+            input.value = map[name];
+        }
+    });
+
+  const previousInspectionData = JSON.parse(localStorage.getItem("inspectionFormData")) || {};
+  const evaluatedByNameInput = document.getElementById("evaluatedByName");
+  const evaluatedByIdInput = document.getElementById("evaluatedById");
+  const evaluatedByPositionInput = document.getElementById("evaluatedByPosition");
+  const approvedByNameInput = document.getElementById("approvedByName");
+  const recommendingApprovalIdInput = document.getElementById("recommendingApprovalId");
+  const approvedByPositionInput = document.getElementById("approvedByPosition");
+  const evaluatorList = document.getElementById("evaluatorList");
+  const approverList = document.getElementById("approverList");
+  const paymentStatusInput = document.getElementById("paymentStatus");
+  const paymentAmountInput = document.getElementById("paymentAmount");
+  let utilizationEvaluators = [];
+  let rpsApprovers = [];
+
+  async function loadEvaluatorsAndApprovers() {
+    try {
+      const res = await fetch("/users/list");
+      if (!res.ok) return;
+
+      const users = await res.json();
+      if (!Array.isArray(users)) return;
+
+      const normalizedUsers = users
+        .map((user) => ({
+          id: Number(user.id),
+          name: String(user.full_name || user.fullname || "").trim(),
+          position: String(user.position || "").trim(),
+          section: String(user.section || user.attribute || "").trim().toLowerCase()
+        }))
+        .filter((user) => user.name.length > 0);
+
+      utilizationEvaluators = normalizedUsers
+        .filter((user) => user.section.includes("utilization"))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      rpsApprovers = normalizedUsers
+        .filter((user) => user.section.includes("rps"))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (evaluatorList) {
+        evaluatorList.innerHTML = utilizationEvaluators
+          .map((user) => `<option value="${user.name.replace(/"/g, "&quot;")}"></option>`)
+          .join("");
+      }
+
+      if (approverList) {
+        approverList.innerHTML = rpsApprovers
+          .map((user) => `<option value="${user.name.replace(/"/g, "&quot;")}"></option>`)
+          .join("");
+      }
+    } catch (err) {
+      console.error("Failed to load evaluators/approvers:", err);
+    }
+  }
+
+  function autoFillPosition(nameInput, idInput, positionInput, list) {
+    if (!nameInput || !positionInput) return;
+
+    const typedName = String(nameInput.value || "").trim().toLowerCase();
+    if (!typedName) {
+      positionInput.value = "";
+      if (idInput) idInput.value = "";
+      return;
+    }
+
+    const matched = (list || []).find((user) => user.name.toLowerCase() === typedName);
+
+    if (matched) {
+      positionInput.value = matched.position;
+      if (idInput) idInput.value = Number.isFinite(matched.id) ? String(matched.id) : "";
+    } else {
+      if (idInput) idInput.value = "";
+      positionInput.value = "";
+    }
+  }
+
+  if (evaluatedByNameInput) evaluatedByNameInput.value = "";
+  if (evaluatedByIdInput) evaluatedByIdInput.value = "";
+  if (evaluatedByPositionInput) evaluatedByPositionInput.value = "";
+  if (approvedByNameInput) approvedByNameInput.value = previousInspectionData.approvedByName || "";
+  if (recommendingApprovalIdInput) recommendingApprovalIdInput.value = previousInspectionData.recommendingApproval_id || "";
+  if (approvedByPositionInput) approvedByPositionInput.value = previousInspectionData.approvedByPosition || "";
+  const releasedAtInput = document.querySelector('input[name="releasedAt"]');
+  if (releasedAtInput && previousInspectionData.releasedAt) {
+    releasedAtInput.value = toDateOnly(previousInspectionData.releasedAt);
+  }
+  if (paymentStatusInput) paymentStatusInput.value = previousInspectionData.payment || sourceData.payment || "Pending Payment";
+  if (paymentAmountInput) paymentAmountInput.value = previousInspectionData.amount || (sourceData.amount != null ? String(sourceData.amount) : "");
+
+  const syncPaymentAmountState = () => {
+    if (!paymentStatusInput || !paymentAmountInput) return;
+    const isPaid = paymentStatusInput.value === "Paid";
+    paymentAmountInput.disabled = !isPaid;
+    if (isPaid) {
+      paymentAmountInput.value = "500";
+    } else {
+      paymentAmountInput.value = "";
+    }
+  };
+
+  if (paymentStatusInput) paymentStatusInput.addEventListener("change", syncPaymentAmountState);
+  syncPaymentAmountState();
+
+  if (evaluatedByNameInput) {
+    evaluatedByNameInput.addEventListener("input", () => autoFillPosition(evaluatedByNameInput, evaluatedByIdInput, evaluatedByPositionInput, utilizationEvaluators));
+    evaluatedByNameInput.addEventListener("change", () => autoFillPosition(evaluatedByNameInput, evaluatedByIdInput, evaluatedByPositionInput, utilizationEvaluators));
+    evaluatedByNameInput.addEventListener("blur", () => autoFillPosition(evaluatedByNameInput, evaluatedByIdInput, evaluatedByPositionInput, utilizationEvaluators));
+  }
+
+  if (approvedByNameInput) {
+    approvedByNameInput.addEventListener("input", () => autoFillPosition(approvedByNameInput, recommendingApprovalIdInput, approvedByPositionInput, rpsApprovers));
+    approvedByNameInput.addEventListener("change", () => autoFillPosition(approvedByNameInput, recommendingApprovalIdInput, approvedByPositionInput, rpsApprovers));
+    approvedByNameInput.addEventListener("blur", () => autoFillPosition(approvedByNameInput, recommendingApprovalIdInput, approvedByPositionInput, rpsApprovers));
+  }
+
+  loadEvaluatorsAndApprovers().then(() => {
+    if (evaluatedByNameInput && evaluatedByPositionInput && !evaluatedByPositionInput.value) {
+      autoFillPosition(evaluatedByNameInput, evaluatedByIdInput, evaluatedByPositionInput, utilizationEvaluators);
+    }
+    if (approvedByNameInput && approvedByPositionInput && !approvedByPositionInput.value) {
+      autoFillPosition(approvedByNameInput, recommendingApprovalIdInput, approvedByPositionInput, rpsApprovers);
+    }
+  });
+
+    // Save inspection data
+    document.querySelector(".next-btn").addEventListener("click", () => {
+        const inspectionData = {};
+        document.querySelectorAll(".registration-form input, .registration-form select").forEach(input => {
+            if (input.name) inspectionData[input.name] = input.value;
+        });
+        // Map inspection approver fields to recommending approval fields for downstream templates.
+        inspectionData.recommendingApprovalName = String(inspectionData.approvedByName || "").trim().toUpperCase();
+        inspectionData.recommendingApprovalPosition = String(inspectionData.approvedByPosition || "").trim();
+
+        localStorage.setItem("inspectionFormData", JSON.stringify(inspectionData));
+        window.location.href = "Uploads.html";
+    });
+});
+
+const backBtn = document.getElementById("backBtn");
+if (backBtn) {
+    backBtn.addEventListener("click", () => {
+        // Preserve Add Files inputs and return to previous step.
+        window.location.href = "Addfiles.html";
+    });
+}
+</script>
+
+
+
+</body>
+</html>

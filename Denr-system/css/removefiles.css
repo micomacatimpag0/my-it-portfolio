@@ -1,0 +1,163 @@
+/* --- Base Layout Fixes --- */
+body {
+    display: flex;
+    background: #f8fafc; /* Lighter background for dashboard feel */
+    height: 100vh; /* Force body to be exactly the screen height */
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  width: 220px;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.sidebar h2 {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #333;
+  text-align: center; /* Ensures text is centered */
+  font-weight: bold;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+  font-family: sans-serif;
+  font-size: 15px;
+}
+
+.sidebar ul li a:hover, 
+.sidebar ul li a.active {
+    background-color: #e8f5e9;
+    color: #333;
+    
+}
+
+/* --- Main Content Area --- */
+.main {
+    flex: 1;
+    margin-left: 220px; /* Match Sidebar Width */
+    padding: 30px;
+}
+
+/* --- CENTERED HEADER --- */
+.page-header {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Horizontally centers the H1 */
+    align-items: center;
+    margin-bottom: 30px;
+    padding-top: 10px;
+}
+
+.page-header h1 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #050505; /* Darker DENR Green */
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* --- Table & Container --- */
+.container.dashboard {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    
+}
+
+.users-table h3 {
+    color: #050505;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    font-size: 25px;
+}
+
+.table-container {
+    border-radius: 8px;
+    overflow: scroll;
+    margin-bottom: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Header Styling */
+thead th {
+    background-color: #2e7d32 !important; /* DENR Green */
+    color: white !important;
+    padding: 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #444;
+}
+
+/* --- DELETE BUTTON STYLE --- */
+.delete-btn {
+    background-color: #f44336; /* Red */
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #b71c1c;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Message Alerts */
+#result.message {
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+}

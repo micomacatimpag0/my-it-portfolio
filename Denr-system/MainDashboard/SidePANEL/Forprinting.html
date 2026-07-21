@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <title>E-CHAINSAW RMS - Approval</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/evalution.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/liquid-glass.css">
+    <style>
+        .forprinting-page .pdf-field-readonly .pdf-field-label {
+            display: inline-block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #0f766e;
+        }
+
+        .forprinting-page .pdf-field-readonly textarea[readonly] {
+            background: linear-gradient(180deg, #f8fffc 0%, #ecfdf5 100%);
+            border-color: #99f6e4;
+            color: #134e4a;
+            box-shadow: inset 0 1px 2px rgba(15, 118, 110, 0.08);
+        }
+    </style>
+</head>
+<body class="forprinting-page">
+  <div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Logo" style="width: 100px; height: auto;">
+        </div>
+        <h2>CHAINSAW REGISTRATION SYSTEM <br> <span>ADMIN</span></h2>
+        
+    </div>
+    <ul>
+      <li><a href="/MainDashboard/AdminDashboard.html">Dashboard</a></li>
+      <li><a href="/MainDashboard/SidePANEL/Forprinting.html" class="active">For Printing</a></li>
+      <li><a href="/MainDashboard/SidePANEL/approval.html">Approval</a></li>
+      <li><a href="/MainDashboard/SidePANEL/registered.html">Registered</a></li>
+      <li><a href="/Auth/adduser.html">Add Employee</a></li>
+      <li><a href="/Auth/Login.html" id="logoutBtn">Log out</a></li>
+      <li class="bottom-link"><a class="bottom-nav" href="/liquid-glass/aboutDev.html">About Developers</a></li>
+    </ul>
+  </div>
+
+    <main class="main">
+     <div class="content-wrapper">
+            <div class="page-header">
+                <h1>For Printing</h1>
+            </div>
+
+            <div class="filters">
+                <label for="dateFilter">Filter by Date:</label>
+                <select id="dateFilter" class="filter-select">
+                    <option value="all">All Time</option>
+                    <option value="week">Past 1 Week</option>
+                    <option value="month">Past 1 Month</option>
+                    <option value="year">Past 1 Year</option>
+                </select>
+                <label for="commentFilter">Comments:</label>
+                <select id="commentFilter" class="filter-select">
+                    <option value="uncommented" selected>Not Yet Commented</option>
+                    <option value="commented">Already Commented</option>
+                    <option value="all">All</option>
+                </select>
+                <input id="searchInput" class="filter-search" type="text" placeholder="Search reg no, owner, serial">
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Registration No.</th>
+                            <th>Name of Owner</th>
+                            <th>Serial No.</th>
+                            <th>Status</th>
+                            <th>PDF</th>
+                        </tr>
+                    </thead>
+                    <tbody id="approvalRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="pdfOverlay" class="popup-overlay" aria-hidden="true">
+        <div class="popup-dialog pdf-dialog" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+            <div class="pdf-grid">
+                <div class="pdf-panel">
+                    <h3 class="popup-title pdf-panel-title">Print Details</h3>
+                    <p class="popup-message">Update status and optional comment.</p>
+                    <div class="pdf-panel-fields">
+                        <label class="pdf-field">
+                            Approval Status
+                            <select id="approvalStatusInput">
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Returned">Returned</option>
+                            </select>
+                        </label>
+                        <label class="pdf-field">
+                            Approved By Comment
+                            <textarea id="approvedByCommentInput" rows="3" maxlength="255" placeholder="Optional comment"></textarea>
+                        </label>
+                        <label class="pdf-field pdf-field-readonly">
+                            <span class="pdf-field-label">From Evaluator</span>
+                            <textarea id="recommendingApprovalInput" rows="3" readonly placeholder="No recommending approval comment"></textarea>
+                        </label>
+                        <label id="lateReasonWrap" class="pdf-field" style="display: none;">
+                            Reason for late printing
+                            <input id="lateReasonInput" type="text" maxlength="255" placeholder="Enter reason for delay">
+                            <small style="display:block; margin-top: 6px; color:#b91c1c;">Required because TAT is overdue.</small>
+                        </label>
+                    </div>
+                    <div class="popup-actions pdf-actions">
+                        <button type="button" id="confirmPrintBtn" class="popup-btn">Save</button>
+                        <button type="button" id="pdfCloseBtn" class="popup-btn pdf-close-btn">Close</button>
+                    </div>
+                </div>
+                <div class="pdf-preview">
+                    <h3 id="pdfTitle" class="popup-title pdf-title-row">
+                        <span>PDF Preview</span>
+                        <button type="button" id="pdfFullscreenBtn" class="popup-btn pdf-fullscreen-btn">Full Screen</button>
+                    </h3>
+                    <iframe id="pdfFrame" class="pdf-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progressOverlay" class="progress-overlay" aria-hidden="true">
+        <div class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="progressTitle">
+            <h3 id="progressTitle" class="progress-title">Processing...</h3>
+            <div class="progress-track">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText" class="progress-text">Please wait.</p>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const rowsEl = document.getElementById("approvalRows");
+        const dateFilter = document.getElementById("dateFilter");
+        const commentFilter = document.getElementById("commentFilter");
+        const searchInput = document.getElementById("searchInput");
+        const pdfOverlay = document.getElementById("pdfOverlay");
+        const pdfFrame = document.getElementById("pdfFrame");
+        const pdfCloseBtn = document.getElementById("pdfCloseBtn");
+        const pdfFullscreenBtn = document.getElementById("pdfFullscreenBtn");
+        const approvalStatusInput = document.getElementById("approvalStatusInput");
+        const approvedByCommentInput = document.getElementById("approvedByCommentInput");
+        const recommendingApprovalInput = document.getElementById("recommendingApprovalInput");
+        const lateReasonWrap = document.getElementById("lateReasonWrap");
+        const lateReasonInput = document.getElementById("lateReasonInput");
+        const confirmPrintBtn = document.getElementById("confirmPrintBtn");
+        const progressOverlay = document.getElementById("progressOverlay");
+        const progressFill = document.getElementById("progressFill");
+        const progressTitle = document.getElementById("progressTitle");
+        const progressText = document.getElementById("progressText");
+        const nextReturnedBtn = document.getElementById("nextReturnedBtn");
+        let allItems = [];
+        let activeRange = "all";
+        let activeCommentFilter = "uncommented";
+        let pdfUrl = null;
+        let progressTimer = null;
+        let progressValue = 0;
+        let isProcessing = false;
+        let selectedRegistrationId = null;
+        let selectedRowEl = null;
+        let activeRecord = null;
+        let searchQuery = "";
+
+        const parseServerDateTime = (value) => {
+            if (!value) return null;
+            if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+
+            const raw = String(value).trim();
+            if (!raw) return null;
+
+            const mysqlMatch = raw.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})$/);
+            if (mysqlMatch) {
+                const asUtc = `${mysqlMatch[1]}T${mysqlMatch[2]}Z`;
+                const d = new Date(asUtc);
+                return Number.isNaN(d.getTime()) ? null : d;
+            }
+
+            const d = new Date(raw);
+            return Number.isNaN(d.getTime()) ? null : d;
+        };
+
+        const isTatOverdue = (tatExpiry) => {
+            if (!tatExpiry) return false;
+            const end = parseServerDateTime(tatExpiry);
+            if (!end) return false;
+            return end.getTime() < Date.now();
+        };
+
+        const startProgress = (title) => {
+            if (isProcessing) return false;
+            isProcessing = true;
+            document.body.classList.add("processing-lock");
+            document.body.setAttribute("aria-busy", "true");
+            progressTitle.textContent = title || "Processing...";
+            progressText.textContent = "Please wait while the request is being processed.";
+            progressOverlay.style.display = "flex";
+            progressOverlay.setAttribute("aria-hidden", "false");
+            progressValue = 8;
+            progressFill.style.width = `${progressValue}%`;
+
+            if (progressTimer) clearInterval(progressTimer);
+            progressTimer = setInterval(() => {
+                if (progressValue < 92) {
+                    progressValue += Math.random() * 6;
+                    if (progressValue > 92) progressValue = 92;
+                    progressFill.style.width = `${progressValue}%`;
+                }
+            }, 220);
+            return true;
+        };
+
+        const finishProgress = (success, message) => {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+            progressFill.style.width = "100%";
+            progressText.textContent = message || (success ? "Completed." : "Failed.");
+
+            setTimeout(() => {
+                progressOverlay.style.display = "none";
+                progressOverlay.setAttribute("aria-hidden", "true");
+                progressFill.style.width = "0%";
+                isProcessing = false;
+                document.body.classList.remove("processing-lock");
+                document.body.removeAttribute("aria-busy");
+            }, 500);
+        };
+
+        const blockWhileProcessing = (e) => {
+            if (!isProcessing) return;
+            const insideProgress = e.target && e.target.closest && e.target.closest("#progressOverlay");
+            if (!insideProgress) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
+        };
+
+        const renderRows = (items) => {
+            if (!rowsEl) return;
+            rowsEl.innerHTML = "";
+
+            // Filter only items pending for print
+            const pendingItems = items.filter((item) => {
+                const released = String(item.releasedStatus || "").toLowerCase();
+                const approval = String(item.approvalStatus || "").toLowerCase();
+                return approval === "pending" && released === "pending";
+            });
+
+            const commentFilteredItems = pendingItems.filter((item) => {
+                if (activeCommentFilter === "all") return true;
+                const hasComment = Boolean(String(item && item.approvedByComment || "").trim());
+                if (activeCommentFilter === "commented") return hasComment;
+                return !hasComment;
+            });
+
+            const q = searchQuery.trim().toLowerCase();
+            const filteredItems = q
+                ? commentFilteredItems.filter((item) =>
+                    String(item.regNo || "").toLowerCase().includes(q) ||
+                    String(item.ownerName || "").toLowerCase().includes(q) ||
+                    String(item.serialNo || "").toLowerCase().includes(q)
+                )
+                : commentFilteredItems;
+
+            if (!filteredItems.length) {
+                rowsEl.innerHTML = `<tr><td colspan="5" style="text-align:center;">No pending records found.</td></tr>`;
+                return;
+            }
+
+            filteredItems.forEach((item) => {
+                const tr = document.createElement("tr");
+                tr.classList.add("selectable-row");
+                tr.dataset.id = String(item.id);
+                tr.innerHTML = `
+                    <td>${item.regNo || ""}</td>
+                    <td>${item.ownerName || ""}</td>
+                    <td>${item.serialNo || ""}</td>
+                    <td><span class="badge status-approved">Pending</span></td>
+                    <td>
+                        <button type="button" class="btn btn-view pdf-btn" data-id="${item.id}">Preview PDF</button>
+                    </td>
+                `;
+                rowsEl.appendChild(tr);
+
+                tr.addEventListener("click", (e) => {
+                    // Don't treat button clicks as row selection.
+                    if (e.target && e.target.closest && e.target.closest("button")) return;
+                    selectedRegistrationId = Number(item.id);
+                    if (selectedRowEl) selectedRowEl.classList.remove("is-selected");
+                    selectedRowEl = tr;
+                    tr.classList.add("is-selected");
+                });
+            });
+
+            rowsEl.querySelectorAll(".pdf-btn").forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    const id = btn.getAttribute("data-id");
+                    const record = filteredItems.find((i) => String(i.id) === String(id));
+                    if (!record) return;
+                    activeRecord = record;
+                    if (approvalStatusInput) approvalStatusInput.value = record.approvalStatus || "Pending";
+                    if (approvedByCommentInput) approvedByCommentInput.value = String(record.approvedByComment || "").trim();
+                    if (recommendingApprovalInput) recommendingApprovalInput.value = String(record.recommendingApproval || "").trim();
+                    const overdue = isTatOverdue(record.tatExpiry);
+                    if (lateReasonWrap) lateReasonWrap.style.display = overdue ? "block" : "none";
+                    if (lateReasonInput) lateReasonInput.value = overdue ? String(record.processRemarks || "").trim() : "";
+                    await previewPdf(record);
+                });
+            });
+
+        };
+
+        if (nextReturnedBtn) {
+            nextReturnedBtn.addEventListener("click", () => {
+                if (!selectedRegistrationId) {
+                    alert("Select a record first.");
+                    return;
+                }
+                window.location.href = `/MainDashboard/SidePANEL/Returned/upload_returned.html?registrationId=${encodeURIComponent(String(selectedRegistrationId))}`;
+            });
+        }
+
+        const filterByRange = (items) => {
+            if (activeRange === "all") return items;
+            const now = new Date();
+            let cutoff = new Date(now);
+
+            if (activeRange === "week") cutoff.setDate(now.getDate() - 7);
+            if (activeRange === "month") cutoff.setMonth(now.getMonth() - 1);
+            if (activeRange === "year") cutoff.setFullYear(now.getFullYear() - 1);
+
+            return items.filter((item) => {
+                const dateVal = item.dateRegistered || item.tatStart;
+                if (!dateVal) return false;
+                return new Date(dateVal) >= cutoff;
+            });
+        };
+
+        if (dateFilter) {
+            dateFilter.addEventListener("change", () => {
+                activeRange = dateFilter.value || "all";
+                renderRows(filterByRange(allItems));
+            });
+        }
+        if (commentFilter) {
+            commentFilter.addEventListener("change", () => {
+                activeCommentFilter = commentFilter.value || "uncommented";
+                renderRows(filterByRange(allItems));
+            });
+        }
+        if (searchInput) {
+            searchInput.addEventListener("input", () => {
+                searchQuery = searchInput.value || "";
+                renderRows(filterByRange(allItems));
+            });
+        }
+
+        const loadData = async () => {
+            try {
+                
+                const res = await fetch("/registrations/evaluation");
+                const data = await res.json();
+                allItems = Array.isArray(data) ? data : [];
+                renderRows(filterByRange(allItems));
+            } catch (err) {
+                console.error("Failed to load approval data:", err);
+                renderRows([]);
+            }
+        };
+
+        const previewPdf = async (record) => {
+            if (!startProgress("Generating PDF preview...")) return;
+            const formData = new FormData();
+            const data = {
+                regNo: record.regNo || "",
+                ownerName: record.ownerName || "",
+                address: record.address || "",
+                brand: record.brand || "",
+                model: record.model || "",
+                datePurchased: record.datePurchased || "",
+                serialNo: record.serialNo || "",
+                horsepower: record.horsepower || "",
+                guidebar: record.guidebar || "",
+                others: record.others || "",
+                dateRegistered: record.dateRegistered || "",
+                expiryDate: record.expiryDate || "",
+                purpose: record.purpose || "",
+                remarks: record.remarks || "",
+                receiptNo: record.receiptNo || "",
+                orNumber: record.orNumber || "",
+                performanceEval: record.performanceEval || "",
+                recommendation: record.recommendation || "",
+                dealer: record.dealer || "",
+                evaluatedByName: record.evaluatedByName || "",
+                evaluatedByPosition: record.evaluatedByPosition || "",
+                approvedByName: record.approvedByName || "",
+                approvedByPosition: record.approvedByPosition || "",
+                recommendingApprovalName: record.recommendingApprovalName || "",
+                recommendingApprovalPosition: record.recommendingApprovalPosition || ""
+            };
+
+            Object.keys(data).forEach((key) => formData.append(key, data[key]));
+
+            const images = Array.isArray(record.images) ? record.images.slice(0, 10) : [];
+            for (let i = 0; i < images.length; i++) {
+                try {
+                    const res = await fetch(images[i]);
+                    const blob = await res.blob();
+                    formData.append(`img${i + 1}`, blob, `image${i + 1}.jpg`);
+                } catch (err) {
+                    console.error("Image fetch failed:", err);
+                }
+            }
+
+            try {
+                const res = await fetch("/generate-pdf", { method: "POST", body: formData });
+                if (!res.ok) throw new Error("PDF generation failed");
+
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                openPdfModal(url);
+                finishProgress(true, "PDF generated successfully.");
+            } catch (err) {
+                console.error("PDF preview error:", err);
+                finishProgress(false, "Failed to preview PDF.");
+                alert("Failed to preview PDF.");
+            }
+        };
+
+        const openPdfModal = (url) => {
+            if (!pdfOverlay || !pdfFrame) return;
+            if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+            pdfUrl = url;
+            pdfFrame.src = pdfUrl;
+            pdfOverlay.classList.add("show");
+            pdfOverlay.setAttribute("aria-hidden", "false");
+        };
+
+        const closePdfModal = () => {
+            if (!pdfOverlay || !pdfFrame) return;
+            pdfOverlay.classList.remove("show");
+            pdfOverlay.setAttribute("aria-hidden", "true");
+            pdfFrame.src = "";
+            if (pdfUrl) {
+                URL.revokeObjectURL(pdfUrl);
+                pdfUrl = null;
+            }
+        };
+
+        if (pdfOverlay) {
+            pdfOverlay.addEventListener("click", (e) => {
+                if (e.target === pdfOverlay) closePdfModal();
+            });
+        }
+        if (pdfCloseBtn) pdfCloseBtn.addEventListener("click", closePdfModal);
+        if (pdfFullscreenBtn) {
+            pdfFullscreenBtn.addEventListener("click", () => {
+                if (!pdfFrame) return;
+                const target = pdfFrame;
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (target.requestFullscreen) {
+                    target.requestFullscreen().catch(() => {});
+                }
+            });
+        }
+        if (confirmPrintBtn) {
+            confirmPrintBtn.addEventListener("click", async () => {
+                if (!activeRecord) return;
+                const approvalStatus = approvalStatusInput ? approvalStatusInput.value : "Pending";
+                const releasedStatus = (activeRecord && activeRecord.releasedStatus) || "Pending";
+                const commentVal = approvedByCommentInput ? approvedByCommentInput.value.trim() : "";
+                const recommendingComment = String(activeRecord && activeRecord.recommendingApproval || "").trim();
+                const approvedComment = commentVal || String(activeRecord && activeRecord.approvedByComment || "").trim();
+                const commentCount = Number(Boolean(recommendingComment)) + Number(Boolean(approvedComment));
+                if (commentCount < 2 && (approvalStatus === "Approved" || approvalStatus === "Returned")) {
+                    const proceedStatusChange = confirm(`Are you sure you want to ${approvalStatus === "Approved" ? "approve" : "return"} this record?`);
+                    if (!proceedStatusChange) return;
+                } else if (commentCount >= 2 && approvalStatus === "Pending") {
+                    const keepPending = confirm("Both comments are already present. Are you sure you want to keep this record pending?");
+                    if (!keepPending) return;
+                }
+                const overdue = isTatOverdue(activeRecord.tatExpiry);
+                const lateReason = lateReasonInput ? lateReasonInput.value.trim() : "";
+                if (overdue && !lateReason) {
+                    alert("TAT is overdue. Please enter a reason for late printing.");
+                    return;
+                }
+                const payload = {
+                    approvalStatus,
+                    releasedStatus,
+                    approvedByComment: commentVal || null
+                };
+                if (overdue || lateReason) {
+                    payload.processRemarks = lateReason;
+                }
+                try {
+                    const res = await fetch(`/registrations/${activeRecord.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || "Update failed");
+                    activeRecord.approvalStatus = approvalStatus;
+                    activeRecord.releasedStatus = releasedStatus;
+                    activeRecord.approvedByComment = commentVal || null;
+                    activeRecord.processRemarks = lateReason || null;
+                    closePdfModal();
+                    loadData();
+                } catch (err) {
+                    console.error("Print status update error:", err);
+                    alert("Failed to update print status.");
+                }
+            });
+        }
+
+        document.addEventListener("click", blockWhileProcessing, true);
+        document.addEventListener("contextmenu", blockWhileProcessing, true);
+        document.addEventListener("submit", blockWhileProcessing, true);
+        document.addEventListener("keydown", (e) => {
+            if (!isProcessing) return;
+            if (e.key !== "F5") {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+<title>Mobile Camera Upload</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #1f2937;
+  }
+  .wrap {
+    max-width: 560px;
+    margin: 24px auto;
+    padding: 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
+  h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 20px;
+  }
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  select, input[type="file"], button {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+  }
+  select, input[type="file"] {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  button {
+    border: none;
+    background: #0f766e;
+    color: #fff;
+    padding: 10px 14px;
+    font-weight: 600;
+  }
+  button:disabled {
+    opacity: 0.6;
+  }
+  .source-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .source-btn.secondary {
+    background: #334155;
+  }
+  .hint {
+    font-size: 12px;
+    color: #475569;
+    margin-top: -6px;
+    margin-bottom: 10px;
+  }
+  .preview-list {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .taken-list {
+    margin-top: 10px;
+    padding-left: 18px;
+    font-size: 12px;
+    color: #334155;
+  }
+  .preview-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8fafc;
+  }
+  .preview-item img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+  }
+  .preview-meta {
+    padding: 8px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .status {
+    margin-top: 12px;
+    min-height: 18px;
+    font-size: 13px;
+  }
+  .error {
+    color: #b91c1c;
+  }
+  .ok {
+    color: #065f46;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h2>Upload Camera Image</h2>
+    <p>Select which required attachment this photo belongs to.</p>
+    <p id="sessionInfo"></p>
+
+    <label for="slotSelect">Attachment Slot</label>
+    <select id="slotSelect">
+      <option value="1">1. Serial Number</option>
+      <option value="2">2. Chainsaw</option>
+      <option value="3">3. Chainsaw With Client</option>
+      <option value="4">4. Serial Number Copy</option>
+      <option value="5">5. Technical Description</option>
+      <option value="6">6. Brgy Certification</option>
+      <option value="7">7. Affidavit of Legal Use</option>
+      <option value="8">8. Receipt of Chainsaw</option>
+      <option value="9">9. Permit to Sell</option>
+      <option value="10">10. Receipt of Payment</option>
+    </select>
+
+    <label>Select Image Source</label>
+    <div class="source-actions">
+      <button id="takePhotoBtn" type="button" class="source-btn">Take Photo</button>
+      <button id="choosePhotoBtn" type="button" class="source-btn secondary">Choose Local Photos</button>
+    </div>
+    <p class="hint">New picks are assigned from the selected start slot and replace existing images in those slot(s).</p>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
+    <input type="file" id="galleryInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;">
+    <div class="source-actions">
+      <button id="uploadBtn" type="button">Upload</button>
+      <button id="clearListBtn" type="button" class="source-btn secondary">Clear List</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="previewList" class="preview-list"></div>
+    <ol id="takenList" class="taken-list"></ol>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const sessionId = params.get("session");
+const initialSlot = params.get("slot");
+
+const slotSelect = document.getElementById("slotSelect");
+const takePhotoBtn = document.getElementById("takePhotoBtn");
+const choosePhotoBtn = document.getElementById("choosePhotoBtn");
+const cameraInput = document.getElementById("cameraInput");
+const galleryInput = document.getElementById("galleryInput");
+const uploadBtn = document.getElementById("uploadBtn");
+const clearListBtn = document.getElementById("clearListBtn");
+const statusEl = document.getElementById("status");
+const sessionInfo = document.getElementById("sessionInfo");
+const previewList = document.getElementById("previewList");
+const takenList = document.getElementById("takenList");
+const allowedSlots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const slotLabels = {
+  1: "Serial Number",
+  2: "Chainsaw",
+  3: "Chainsaw With Client",
+  4: "Serial Number Copy",
+  5: "Technical Description",
+  6: "Brgy Certification",
+  7: "Affidavit of Legal Use",
+  8: "Receipt of Chainsaw",
+  9: "Permit to Sell",
+  10: "Receipt of Payment"
+};
+let selectedItems = [];
+
+if (initialSlot && Number(initialSlot) >= 1 && Number(initialSlot) <= 10) {
+  slotSelect.value = String(initialSlot);
+}
+
+if (!sessionId) {
+  sessionInfo.textContent = "Session missing. Please scan QR from the PC upload page.";
+  sessionInfo.className = "error";
+  uploadBtn.disabled = true;
+  takePhotoBtn.disabled = true;
+  choosePhotoBtn.disabled = true;
+  slotSelect.disabled = true;
+} else {
+  sessionInfo.textContent = "Connected session: " + sessionId;
+}
+
+function setStatus(message, type) {
+  statusEl.textContent = message;
+  statusEl.className = "status " + (type || "");
+}
+
+async function uploadSelectedFile() {
+  if (!selectedItems.length) {
+    setStatus("Please capture/select image(s) first.", "error");
+    return;
+  }
+
+  if (!sessionId) {
+    setStatus("Cannot upload: missing session.", "error");
+    return;
+  }
+
+  uploadBtn.disabled = true;
+  clearListBtn.disabled = true;
+  setStatus("Uploading 0/" + selectedItems.length + "...", "");
+
+  try {
+    for (let i = 0; i < selectedItems.length; i++) {
+      const item = selectedItems[i];
+      const formData = new FormData();
+      formData.append("photo", item.file);
+      formData.append("sessionId", sessionId);
+      formData.append("slot", String(item.slot));
+
+      setStatus("Uploading " + (i + 1) + "/" + selectedItems.length + " (slot " + item.slot + ")...", "");
+
+      const res = await fetch("/mobile-upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || "Upload failed");
+      }
+    }
+
+    setStatus("Uploaded " + selectedItems.length + " image(s) successfully.", "ok");
+    selectedItems = [];
+    cameraInput.value = "";
+    galleryInput.value = "";
+    previewList.innerHTML = "";
+    takenList.innerHTML = "";
+  } catch (err) {
+    setStatus("Upload error: " + err.message, "error");
+  } finally {
+    uploadBtn.disabled = false;
+    clearListBtn.disabled = false;
+  }
+}
+
+function getTargetSlots(startSlot, count) {
+  const start = Number(startSlot);
+  const startIndex = allowedSlots.indexOf(start);
+  if (startIndex < 0) return [];
+  const slots = [];
+  for (let i = 0; i < count; i++) {
+    slots.push(allowedSlots[(startIndex + i) % allowedSlots.length]);
+  }
+  return slots;
+}
+
+function renderPreviews(items) {
+  previewList.innerHTML = "";
+  takenList.innerHTML = "";
+  const ordered = [...items].sort(
+    (a, b) => allowedSlots.indexOf(a.slot) - allowedSlots.indexOf(b.slot)
+  );
+  ordered.forEach((item, idx) => {
+    const card = document.createElement("div");
+    card.className = "preview-item";
+    const img = document.createElement("img");
+    img.src = item.previewUrl;
+    const meta = document.createElement("div");
+    meta.className = "preview-meta";
+    const kb = Math.round(item.file.size / 1024);
+    meta.textContent = "#" + (idx + 1) + " -> " + (slotLabels[item.slot] || ("Slot " + item.slot)) + " | " + kb + " KB";
+    card.appendChild(img);
+    card.appendChild(meta);
+    previewList.appendChild(card);
+
+    const li = document.createElement("li");
+    li.textContent = item.file.name + " -> " + (slotLabels[item.slot] || ("Slot " + item.slot));
+    takenList.appendChild(li);
+  });
+}
+
+function appendPickedFiles(files) {
+  const incoming = Array.from(files || []).filter(Boolean);
+  if (!incoming.length) return;
+  const targetSlots = getTargetSlots(slotSelect.value, incoming.length);
+
+  incoming.forEach((file, idx) => {
+    const slot = targetSlots[idx];
+    const existingIndex = selectedItems.findIndex((item) => item.slot === slot);
+    const newItem = {
+      file,
+      slot,
+      previewUrl: URL.createObjectURL(file)
+    };
+
+    if (existingIndex >= 0) {
+      if (selectedItems[existingIndex].previewUrl) {
+        URL.revokeObjectURL(selectedItems[existingIndex].previewUrl);
+      }
+      selectedItems[existingIndex] = newItem;
+    } else {
+      selectedItems.push(newItem);
+    }
+  });
+
+  renderPreviews(selectedItems);
+  setStatus(selectedItems.length + " image(s) ready. Tap Upload.", "");
+}
+
+function clearPickedFiles() {
+  selectedItems.forEach((item) => {
+    if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+  });
+  selectedItems = [];
+  previewList.innerHTML = "";
+  takenList.innerHTML = "";
+  cameraInput.value = "";
+  galleryInput.value = "";
+  setStatus("Image list cleared.", "");
+}
+
+takePhotoBtn.addEventListener("click", () => {
+  cameraInput.click();
+});
+
+choosePhotoBtn.addEventListener("click", () => {
+  galleryInput.click();
+});
+
+cameraInput.addEventListener("change", () => {
+  appendPickedFiles(cameraInput.files[0] ? [cameraInput.files[0]] : []);
+  cameraInput.value = "";
+});
+
+galleryInput.addEventListener("change", () => {
+  appendPickedFiles(galleryInput.files || []);
+  galleryInput.value = "";
+});
+
+slotSelect.addEventListener("change", () => {
+  if (selectedItems.length) {
+    const label = slotLabels[Number(slotSelect.value)] || ("Slot " + slotSelect.value);
+    setStatus("Start slot changed. New picks will replace from " + label + ".", "");
+  }
+});
+
+uploadBtn.addEventListener("click", uploadSelectedFile);
+clearListBtn.addEventListener("click", clearPickedFiles);
+</script>
+</body>
+</html>
+

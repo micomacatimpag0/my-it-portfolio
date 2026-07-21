@@ -1,0 +1,313 @@
+/* Core Layout & Theme Variables */
+:root {
+  --tae-green: #2E7D32;
+  --tae-green-dark: #1B5E20;
+  --tae-green-light: #66bb6a;
+  --tae-gold: #F9A825;
+  --tae-bg: #F1F8E9;
+  --tae-border: #cbd5e1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--tae-bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden; 
+}
+
+/* Main Content Area */
+.main {
+  flex: 1;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 18px;
+  padding: 30px 30px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 22px 45px rgba(15, 23, 42, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.page-header h1 {
+  font-size: 24px;
+  color: var(--tae-green-dark);
+  margin: 0 0 15px 0;
+  font-family: 'Times New Roman', serif;
+}
+
+/* Grid Layout */
+.container.dashboard {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 25px;
+  flex: 1;
+  min-height: 0; /* CRITICAL: Allows grid to shrink below content size */
+  height: 0;     /* Forces the grid to respect the flex-grow of the parent */
+  align-items: start;
+}
+
+/* Form Styling */
+.forms {
+  background: rgba(255, 255, 255, 0.55);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  height: fit-content;
+  box-shadow:
+    0 12px 26px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  max-height: 100%;
+  overflow: auto;
+}
+
+#userForm label {
+  display: block;
+  margin: 10px 0 4px;
+  font-weight: 600;
+  color: #475569; 
+  font-size: 13px;
+}
+
+#userForm input, #userForm select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--tae-border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--tae-green-light);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+#userForm button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--tae-green-light);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.message {
+  min-height: 1.4em;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.users-table {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  min-height: 0; 
+  height: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.users-table h3 {
+ text-align: center;
+ font-size: 22px;
+  color: var(--tae-green-dark);
+  margin: 0 0 15px 0;
+  font-family: 'Times New Roman', serif;
+}
+
+
+.table-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.28);
+  min-height: 0; 
+  box-shadow:
+    0 18px 36px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* Ensure borders are merged properly */
+  overflow-x: auto;
+  border: none; /* Remove outer table border to prevent double lines */
+  background: transparent;
+}
+
+.users-table .data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(226, 232, 240, 0.6));
+  color: #0f172a;
+  padding: 12px 12px;
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+}
+
+/* Precise Column Widths */
+th:nth-child(1), td:nth-child(1) { width: 22%; } 
+th:nth-child(2), td:nth-child(2) { width: 15%; } 
+th:nth-child(3), td:nth-child(3) { width: 25%; } 
+th:nth-child(4), td:nth-child(4) { width: 13%; } 
+th:nth-child(5), td:nth-child(5) { width: 10%; } 
+th:nth-child(6), td:nth-child(6) { width: 15%; } 
+
+.users-table .data-table tbody td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  font-size: 13px;
+  vertical-align: middle;
+  word-wrap: break-word;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(8px) saturate(1.15);
+  -webkit-backdrop-filter: blur(8px) saturate(1.15);
+}
+
+.users-table .data-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.users-table .data-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Action buttons inside table */
+.users-table .action-wrapper {
+  gap: 6px;
+}
+
+.users-table .edit-btn,
+.users-table .delete-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+}
+
+/* FIX: Removing display:flex from the TD itself to kill the ghost lines */
+td:last-child {
+  border-bottom: 1px solid #f1f5f9;
+  text-align: left; /* Keep alignment standard */
+}
+
+/* Use a wrapper inside the TD for button alignment instead */
+.action-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.edit-btn {
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.edit-btn { background: #2e7d32; }
+.delete-btn { background: #d32f2f; }
+
+/* Custom Scrollbar */
+.table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--tae-green-light);
+  border-radius: 10px;
+}
+
+
+

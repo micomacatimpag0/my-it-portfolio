@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
+    <title>Guest Search</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/guest.css">
+    <link rel="stylesheet" href="/css/liquid-glass.css">
+</head>
+<body>
+
+<div class="hero">
+    <div class="container guest-search">
+        <h2>GUEST FILE SEARCH</h2>
+
+        <form id="guestSearchForm">
+            <label for="searchInput">Search by Registration No. or Owner Name</label>
+            <div class="search-row">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Example: 123-2026 or Juan Dela Cruz"
+                    required
+                >
+                <button type="submit" class="btn-liquid">Search</button>
+            </div>
+        </form>
+
+        <p id="statusMessage" class="message status-black"></p>
+
+        <div class="results-wrap">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Reg No</th>
+                        <th>Owner</th>
+                        <th>Brand/Model</th>
+                        <th>Serial No</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6">Search to view registration files.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="hint">Department of Environment and Natural Resources</div>
+    </div>
+</div>
+
+<div id="progressModalOverlay" class="progress-modal-overlay" aria-hidden="true">
+    <div class="progress-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+            <h3 id="modalTitle" class="modal-title">File Progress</h3>
+            <button id="closeModalBtn" type="button" class="close-btn">Close</button>
+        </div>
+        <div class="modal-body">
+            <div id="fileMeta" class="file-meta"></div>
+            <ul id="timeline" class="timeline"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+const guestSearchForm = document.getElementById("guestSearchForm");
+const searchInput = document.getElementById("searchInput");
+const statusMessage = document.getElementById("statusMessage");
+const resultsBody = document.querySelector("#resultsTable tbody");
+const modalOverlay = document.getElementById("progressModalOverlay");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const fileMetaEl = document.getElementById("fileMeta");
+const timelineEl = document.getElementById("timeline");
+let currentResults = [];
+
+function escapeHtml(value) {
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function txt(v) { return String(v || "").trim(); }
+
+function stageOf(item) {
+    const approval = txt(item.approvalStatus || "Pending").toLowerCase();
+    const released = txt(item.releasedStatus || "Pending").toLowerCase();
+    if (released === "released" || item.releasedAt) return "Released";
+    if (approval === "approved") return "Approved - For Release";
+    if (approval === "returned") return "Returned";
+    return "Processing";
+}
+
+function formatReleaseDate(value) {
+    if (!value) return "";
+    if (typeof value === "string") {
+        const ymdMatch = value.trim().match(/^(\d{4}-\d{2}-\d{2})/);
+        if (ymdMatch) return ymdMatch[1];
+    }
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return txt(value);
+    return d.toISOString().slice(0, 10);
+}
+
+function paymentStateOf(item) {
+    return txt(item.payment).toLowerCase() === "paid" ? "Paid" : "Not Paid";
+}
+
+function timelineState(item) {
+    const stage = stageOf(item);
+    const steps = [
+        { title: "Submitted", sub: "File sent for processing" },
+        { title: "Under Evaluation", sub: "Evaluator checking details" },
+        { title: "Approval Stage", sub: `${txt(item.approvalStatus || "Pending")} | ${paymentStateOf(item)}` },
+        { title: "Released", sub: stage === "Released"
+            ? `Released on ${formatReleaseDate(item.releasedAt) || "(date not set)"}`
+            : txt(item.releasedStatus || "Pending") }
+    ];
+
+    let activeIdx = 1;
+    if (stage === "Processing") activeIdx = 1;
+    if (stage === "Returned" || stage === "Approved - For Release") activeIdx = 2;
+    if (stage === "Released") activeIdx = 3;
+    return steps.map((s, i) => ({ ...s, state: i < activeIdx ? "done" : i === activeIdx ? "active" : "todo" }));
+}
+
+function openProgress(item) {
+    const stage = stageOf(item);
+    const releasedInfo = stage === "Released"
+        ? ` | Released: ${formatReleaseDate(item.releasedAt) || "(date not set)"}`
+        : "";
+    fileMetaEl.textContent = `RegNo: ${txt(item.regNo) || "-"} | Owner: ${txt(item.ownerName) || "-"} | Stage: ${stage}${releasedInfo}`;
+    const steps = timelineState(item);
+    timelineEl.innerHTML = steps.map((s) => `
+        <li class="${s.state}">
+            <span class="dot"></span>
+            <div>
+                <div class="t-title">${s.title}</div>
+                <div class="t-sub">${s.sub || "-"}</div>
+            </div>
+        </li>
+    `).join("");
+    modalOverlay.style.display = "flex";
+    modalOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeProgress() {
+    modalOverlay.style.display = "none";
+    modalOverlay.setAttribute("aria-hidden", "true");
+}
+
+function renderRows(rows) {
+    currentResults = rows;
+    if (!rows.length) {
+        resultsBody.innerHTML = "<tr><td colspan=\"6\">No matching registration found.</td></tr>";
+        return;
+    }
+
+    resultsBody.innerHTML = rows.map((row, idx) => `
+        <tr>
+            <td>${escapeHtml(row.regNo)}</td>
+            <td>${escapeHtml(row.ownerName)}</td>
+            <td>${escapeHtml(`${row.brand || ""} ${row.model || ""}`.trim())}</td>
+            <td>${escapeHtml(row.serialNo)}</td>
+            <td>${escapeHtml(row.approvalStatus || "Pending")}</td>
+            <td><button type="button" class="view-btn" data-i="${idx}">View</button></td>
+        </tr>
+    `).join("");
+
+    Array.from(document.querySelectorAll(".view-btn")).forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const i = Number(btn.dataset.i);
+            const item = currentResults[i];
+            if (item) openProgress(item);
+        });
+    });
+}
+
+guestSearchForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    statusMessage.className = "message status-black";
+    statusMessage.textContent = "Searching...";
+
+    try {
+        const res = await fetch(`/registrations/search?query=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error("Search request failed");
+        const rows = await res.json();
+
+        renderRows(Array.isArray(rows) ? rows : []);
+        statusMessage.className = "message success status-black";
+        statusMessage.textContent = `Found ${(rows || []).length} record(s).`;
+    } catch (_) {
+        resultsBody.innerHTML = "<tr><td colspan=\"6\">Unable to search right now.</td></tr>";
+        statusMessage.className = "message error status-black";
+        statusMessage.textContent = "Server error during search.";
+    }
+});
+
+closeModalBtn.addEventListener("click", closeProgress);
+modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) closeProgress(); });
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalOverlay.style.display === "flex") closeProgress();
+});
+</script>
+<script src="/scripts/liquid-glass.js"></script>
+
+</body>
+</html>
